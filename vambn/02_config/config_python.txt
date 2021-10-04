@@ -1,0 +1,27 @@
+
+[GridSearch]
+path_data_python = /vambn/01_data/data_python/
+path_results = /vambn/04_output/HI-VAE/results_ADNI.csv
+hyperparam_options_y_dimensions = 1
+hyperparam_options_learning_rates = 0.001,0.01
+hyperparam_options_weight_decay = 0
+hyperparam_options_batch_size = 16,32
+
+
+[Modelling]
+sample_size = 689
+#sds = 1,2,1,2,1,2,3,1,1,1,1
+sds = 1,1,1,1,1,1,3,1,1,1,1
+path_python_names = /vambn/01_data/python_names/
+path_saved_networks = /vambn/04_output/HI-VAE/Saved_Networks/
+path_train_stats = /vambn/04_output/HI-VAE/Saved_Networks/train_stats/
+path_VP_misslist = /vambn/04_output/HI-VAE/VP_misslist/
+path_metaenc = /vambn/04_output/HI-VAE/metaenc.csv
+path_embedding_plot = /vambn/04_output/HIVAE_Embeddings_Deterministic.png
+path_reconRP = /vambn/04_output/HI-VAE/reconRP.csv
+path_training_logliks = /vambn/04_output/HI-VAE/training_logliks.csv
+path_virtual_ppts = /vambn/04_output/main_VirtualPPts.csv
+path_decoded_VP = /vambn/04_output/HI-VAE/decodedVP.csv
+path_virtual_logliks = /vambn/04_output/HI-VAE/virtual_logliks.csv
+
+

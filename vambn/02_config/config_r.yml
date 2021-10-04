@@ -1,0 +1,6 @@
+default:
+  path_data_in: "/vambn/01_data/"
+  path_data_out: "/vambn/04_output/"
+  path_hivae: "/vambn/04_output/HI-VAE/"
+  name: "main"
+  visit_names: "1 6 12 24"
