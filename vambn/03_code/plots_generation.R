@@ -4,20 +4,22 @@
 rm(list = ls())
 library(tidyverse)
 library(plyr)
+#library(dpylr)
 library(grid)
 library(gridExtra)
 library(Matching)
 library(LaplacesDemon)
 library(Hmisc)
 library(corrplot)
-library(Hmisc)
+#library(Hmisc)
 library(ggpubr)
+#tidyverse_update()
+
 
 ########## Name output files
 
 config <- config::get(file = "/vambn/02_config/config_r.yml")
 path_data_in <- config$path_data_in
-
 name <- config$name
 data_out <- paste0(config$path_data_out, name)
 data_all <- readRDS(paste0(config$path_data_in, "data_condensed.rds"))
@@ -34,7 +36,7 @@ create_all_plots <- function() {
     ############ Plot A: Distribution of Encoded Real vs Encoded Virtual
 
     orig <- data_all[!grepl("stalone", names(data_all))]
-    orig <- orig %>% reduce(merge, by="SUBJID")
+    orig <- orig %>% reduce(base::merge, by = "SUBJID")
     colnames(orig) <- gsub(" ", "\\.", colnames(orig))
     colnames(orig) <- gsub("[()]", "\\.", colnames(orig))
 
@@ -93,7 +95,7 @@ create_all_plots <- function() {
                data_all[["brain68_VIS1"]]
     )
 
-    orig <- orig %>% reduce(merge, by = "SUBJID")
+    orig <- orig %>% reduce(base::merge, by = "SUBJID")
     colnames(orig) <- gsub(" |,|-", "\\.", colnames(orig))
     colnames(orig) <- gsub("[()]", "\\.", colnames(orig))
     orig <- orig[, (colnames(orig) %in% colnames(dec_rp))]
@@ -229,6 +231,6 @@ compare_dists_paper <- function(data, typecol, folder) {
           plot <- ggplot(gd, aes(x = eval(parse(text = col)), y  =freq, fill = type)) + geom_bar(position = "dodge", stat = "identity") + scale_fill_brewer(palette = "Dark2") + xlab(col) + ylab("Count")
       }
     ggsave(paste0(folder, col, ".png"), plot, device = "png", width = 7.26, height = 4.35)
-    ggsave(paste0(folder, col, ".eps"), plot, device = "eps", width = 7.26, height = 4.35)
+    #ggsave(paste0(folder, col, ".eps"), plot, device = "eps", width = 7.26, height = 4.35)
   }
 }

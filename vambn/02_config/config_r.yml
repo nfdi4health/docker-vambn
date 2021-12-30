@@ -4,3 +4,4 @@ default:
   path_hivae: "/vambn/04_output/HI-VAE/"
   name: "main"
   visit_names: "1 6 12 24"
+  hyperopt_method : "GridSearch"  # "BayesianOptimization" or "GridSearch"

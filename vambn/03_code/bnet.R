@@ -137,7 +137,6 @@ run_bnet <- function() {
   real <- discdata
   saveRDS(real, path_real)
 
-  #real$SUBJID<-NULL
   finalBN <- readRDS(path_final_bn)
   fitted <- bn.fit(finalBN, real, method = mth)
   saveRDS(fitted, path_final_bn_fitted)
@@ -174,13 +173,6 @@ simulate_virtual_patient <- function() {
   print("[*] 3. Save vp misslist.")
   save_VPmisslist(virtual, path_data_in, path_hivae)
 
-  ######### Virtual Patient Validation
-  #roc<-validate_VP(real=real,virtual=virtual,proc=F) # full AUC rather than partial AUC
-  #proc<-validate_VP(real=real,virtual=virtual,proc=T) # partial AUC with focus on sensitivity
-
-  # if validation of ARAE/VAE, saveout is in jupyter notebooks 
-  # (VAE_decoded and mclust_decode(R notebook! could make it a script if easier)/ARAE_decoded)
-
   print("[*] BNET virtual patient simulation script completed.")
 }
 
@@ -189,8 +181,6 @@ simulate_virtual_patient <- function() {
 # originally from helper/plot_bn.R
 # save graph as gml for cytoscape
 cyt_graph <- function(g, name, boot) {
-  #type <- ifelse(boot, "_bootstrapBN", "_finalBN")
-
   if (boot) {
     boot_subgraph <- g[g$strength > 0.1 & g$direction > 0.1, ]
     boot_subgraph$strength <- as.character(round(boot_subgraph$strength, 2))
@@ -201,14 +191,10 @@ cyt_graph <- function(g, name, boot) {
 
   g1 <- set_vertex_attr(g1, "visit", value = as.numeric(gsub("[a-zA-Z0-9_]{1,}_VIS", "", V(g1)$name)))
   V(g1)$name <- gsub("SA_|VIS", "", V(g1)$name)
-  #write_graph(g1, paste0(name,type,'.gml'), format = "gml")
 
   E(g1)$strength <- as.character(E(g1)$strength)
   E(g1)$direction <- as.character(E(g1)$direction)
-
-  #netcont <- createNetworkFromIgraph(g1, name, collection = "Graphs")
-  #layoutNetwork("hierarchical")
-  #setVisualStyle("default")
+  
   netcont <- createNetworkFromIgraph(g1, paste0(name, "_noaux"), collection = "Graphs")
   layoutNetwork("hierarchical")
   setVisualStyle("default")
@@ -305,7 +291,6 @@ simulate_VPs <- function(real, res, iterative=FALSE, scr, mth, wl, bl, n=NA) {
   print(n_VP)
 
   # estimate the structure and parameters of the Bayesian network.
-  #res = tabu(real, maxp=5, blacklist=bl,whitelist=wl,  score=scr) 
   # assuming tabu was the best structure learning approach (currently it seems like for PPMI hc is better!)
   fitted <- bn.fit(res, real, method = mth)
   VP <- c()

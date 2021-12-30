@@ -1,6 +1,9 @@
 # import library
 library("reticulate")
+library(config)
 
+
+# get argument
 args <- commandArgs(trailingOnly = TRUE)
 selection <- tryCatch({
                     as.integer(args[1])
@@ -13,19 +16,35 @@ selection <- tryCatch({
 
 print(paste0("[**] Argument received: ", selection))
 
+
+# execute according to the received argument
 if (selection == 0) {
     print("[**] Running all functions...")
 
+    # get hyperopt method from config
+    config <- config::get(file = "/vambn/02_config/config_r.yml")
+    hyperopt_method <- config$hyperopt_method
+
     # hyperparameter optimization
-    print("[**] Executing Grid Search script...")
-    source_python("./vambn/03_code/HIVAE.py")
-    grid_search <- c_HIVAE_GridSearch()
-    grid_search$hyperopt_HIVAE()
-    print("[**] Grid Search script completed.")
+    if (hyperopt_method == "BayesianOptimization"){
+        print("[**] Executing Bayesian Optimization script...")
+        source_python("./vambn/03_code/hivae_bayes-opt.py")
+        bayes_opt <- c_HIVAE_BayesianOptimization()
+        bayes_opt$hyperopt_HIVAE()
+        print("[**] Bayesian Optimization script completed.")
+    } else if (hyperopt_method == "GridSearch") {
+        print("[**] Executing Grid Search script...")
+        source_python("./vambn/03_code/hivae_grid-search.py")
+        grid_search <- c_HIVAE_GridSearch()
+        grid_search$hyperopt_HIVAE()
+        print("[**] Grid Search script completed.")
+    } else {
+        print("[**] Skip hyperparameter optimization.")
+    }
 
     # HIVAE training
     print("[**] Executing HIVAE Training script...")
-    source_python("./vambn/03_code/HIVAE.py")
+    source_python("./vambn/03_code/hivae_modelling.py")
     hivae_modelling <- c_HIVAE_Modelling()
     hivae_modelling$train_HIVAE()
     print("[**] HIVAE Training script completed.")
@@ -44,7 +63,7 @@ if (selection == 0) {
 
     # decode virtual patients
     print("[**] Executing HIVAE Decoding script...")
-    source_python("./vambn/03_code/HIVAE.py")
+    source_python("./vambn/03_code/hivae_modelling.py")
     hivae_modelling <- c_HIVAE_Modelling()
     hivae_modelling$decode_HIVAE()
     print("[**] HIVAE Decoding script completed.")
@@ -56,21 +75,33 @@ if (selection == 0) {
     print("[**] Plotting script completed.")
 
 } else if (selection == 1) {
-    print("[**] Running Grid Search...")
+    # get hyperopt method from config
+    config <- config::get(file = "/vambn/02_config/config_r.yml")
+    hyperopt_method <- config$hyperopt_method
 
     # hyperparameter optimization
-    print("[**] Executing Grid Search script...")
-    source_python("./vambn/03_code/HIVAE.py")
-    grid_search <- c_HIVAE_GridSearch()
-    grid_search$hyperopt_HIVAE()
-    print("[**] Grid Search script completed.")
+    if (hyperopt_method == "BayesianOptimization"){
+        print("[**] Executing Bayesian Optimization script...")
+        source_python("./vambn/03_code/hivae_bayes-opt.py")
+        bayes_opt <- c_HIVAE_BayesianOptimization()
+        bayes_opt$hyperopt_HIVAE()
+        print("[**] Bayesian Optimization script completed.")
+    } else if (hyperopt_method == "GridSearch") {
+        print("[**] Executing Grid Search script...")
+        source_python("./vambn/03_code/hivae_grid-search.py")
+        grid_search <- c_HIVAE_GridSearch()
+        grid_search$hyperopt_HIVAE()
+        print("[**] Grid Search script completed.")
+    } else {
+        print("[**] Skip hyperparameter optimization.")
+    }
 
 } else if (selection == 2) {
     print("[**] Running HIVAE Modelling...")
 
     # HIVAE training
     print("[**] Executing HIVAE Training script...")
-    source_python("./vambn/03_code/HIVAE.py")
+    source_python("./vambn/03_code/hivae_modelling.py")
     hivae_modelling <- c_HIVAE_Modelling()
     hivae_modelling$train_HIVAE()
     print("[**] HIVAE Training script completed.")
@@ -98,7 +129,7 @@ if (selection == 0) {
 
     # decode virtual patients
     print("[**] Executing HIVAE Decoding script...")
-    source_python("./vambn/03_code/HIVAE.py")
+    source_python("./vambn/03_code/hivae_modelling.py")
     hivae_modelling <- c_HIVAE_Modelling()
     hivae_modelling$decode_HIVAE()
     print("[**] HIVAE Decoding script completed.")

@@ -1,17 +1,50 @@
+[HyperparameterOptimization]
 
-[GridSearch]
 path_data_python = /vambn/01_data/data_python/
 path_results = /vambn/04_output/HI-VAE/results_ADNI.csv
-hyperparam_options_y_dimensions = 1
-hyperparam_options_learning_rates = 0.001,0.01
-hyperparam_options_weight_decay = 0
-hyperparam_options_batch_size = 16,32
+path_saved_networks = /vambn/04_output/HI-VAE/Saved_Networks/
 
+################################################################
+# grid search
+
+gs_max_epochs = 1000
+gs_cross_val_k_fold = 3
+gs_early_stop_patience = 4
+gs_seed_n = 42
+
+# hyperparameter optimization options: all categorical
+gs_y_dimensions = 1
+gs_batch_size = 16,32
+gs_learning_rates = 0.001,0.01
+gs_weight_decay = 0.0
+gs_adam_beta_1 = 0.0009,0.9
+gs_adam_beta_2 = 0.0009,0.999
+
+################################################################
+# bayesian optimization
+
+bo_max_epochs = 1000
+bo_n_trial = 15
+bo_cross_val_k_fold = 3
+bo_early_stop_patience = 4
+bo_seed_n = 42
+
+# integers (low, high, step)
+bo_y_dimensions = 1,3,1
+bo_batch_size = 8,64,8
+
+# floats (low, high)
+bo_learning_rates = 0.001,0.01
+bo_weight_decay = 0.001,0.01
+bo_adam_beta_1 = 0.0009,0.9
+bo_adam_beta_2 = 0.0009,0.999
+
+#################################################################
 
 [Modelling]
 sample_size = 689
-#sds = 1,2,1,2,1,2,3,1,1,1,1
 sds = 1,1,1,1,1,1,3,1,1,1,1
+seed_n = 42
 path_python_names = /vambn/01_data/python_names/
 path_saved_networks = /vambn/04_output/HI-VAE/Saved_Networks/
 path_train_stats = /vambn/04_output/HI-VAE/Saved_Networks/train_stats/
