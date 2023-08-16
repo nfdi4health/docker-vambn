@@ -4,7 +4,7 @@ A containerized implementation of the VAMBN approach by TA6.4.
 
 This version does not contain ADNI data. The execution guide below acts as a general reference for executing your own data with VAMBN.
 
-############## VAMBN Execution Guide ################################
+## VAMBN Execution Guide 
 
 1. Please make sure that:
    - You have permission to use the ADNI data.
@@ -32,6 +32,3 @@ This version does not contain ADNI data. The execution guide below acts as a gen
 
 8. To exit the docker interactive mode, execute the following command:
    $ exit
-
-
-############## End of VAMBN Execution Guide ##############################
