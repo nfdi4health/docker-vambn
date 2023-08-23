@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker-vambn:latest
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build & Push the Docker image
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ghcr.io/${{ github.repository }}/vambn:latest, ghcr.io/${{ github.repository }}/vambn:1.0.0
+
