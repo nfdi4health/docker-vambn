@@ -4,7 +4,7 @@ This repository hosts the code for VAMBN 2.0. Unlike its predecessor, this versi
 
 ## Documentation
 
-For detailed information, visit the [documentation page](https://sophia.krix.scai-projects.io/vambn-2).
+For detailed information, visit the [documentation page](https://nfdi4health.github.io/docker-vambn/).
 
 ## License
 
