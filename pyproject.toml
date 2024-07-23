@@ -75,7 +75,7 @@ pyright = "^1.1.350"
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "2.0.0"
-tag_format = "$version"
+tag_format = "v$version"
 
 [build-system]
 requires = ["poetry-core"]
