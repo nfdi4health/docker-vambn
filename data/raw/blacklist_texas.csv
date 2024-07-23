@@ -1,0 +1,14 @@
+from,to
+sexCode,race
+chargesModule,patState
+chargesModule,patStatus
+chargesModule,sexCode
+chargesModule,race
+chargesModule,ethnicity
+chargesModule,patAge
+riskModule,patState
+riskModule,patStatus
+riskModule,sexCode
+riskModule,race
+riskModule,ethnicity
+riskModule,patAge

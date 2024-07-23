@@ -1,0 +1,4 @@
+{
+    "missingness_threshold": 50,
+    "variance_threshold": 0.1
+}

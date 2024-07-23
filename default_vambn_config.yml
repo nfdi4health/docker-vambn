@@ -1,0 +1,60 @@
+snakemake:
+  use_slurm: false # Flag if slurm is available (e.g. on Loewenburg)
+  with_gan: false # Flag if GAN approach should be used in addition to the normal training
+  with_mtl: false # Flag if multitask learning should be used in addition to the normal training
+  output_dir: "reports" # Output directory for the reports
+  bn: # Bayesian network configuration; Does not need to be changed
+    refactor: true
+    cv_runs: 5
+    cv_restart: 5
+    fit: "mle-cg"
+    maxp: 5
+    loss: null
+    score: "bic-cg"
+    folds: 3
+    n_bootstrap: 500
+    seed: 42
+  excluded_datasets: null # Potential list of datasets which should be excluded from the pipeline
+  exclusive_dataset: null # Define this if you ONLY want to run the pipeline for a single dataset
+  cluster_modules:
+    R: null # Optional: A cluster module for R can  be loaded (e.g. "R/4.0.3"). Not required if R is available on the system or in a conda environment
+  r_env: /usr/src/app/R.yml # Path to the R environment file
+general:
+  seed: 42
+  eval_batch_size: 64
+  device: "cpu"
+  optuna_db: "postgresql://vambn:app@postgres:5432/optuna" # Database connection for Optuna; If not available set to null and sqlite databases will be used
+  logging:
+    level: 20
+    mlflow:
+      use: true # Defines if mlflow should be used
+      tracking_uri: "http://mlflow:5000" # Path to the mlflow tracking server
+      experiment_name: VAMBN2 # Name of the mlfow experiment
+optimization:
+  folds: 3 # Number of folds for CV
+  n_traditional_trials: 3 # Number of trials for the traditional approach
+  n_modular_trials: 3 # Number of trials for the modular approach
+  s_dim_lower: 1 # Lower bound for the number of s dim
+  s_dim_upper: 5 # Upper bound for the number of s dim
+  s_dim_step: 1 # Step size for the number of s dim
+  fixed_s_dim: false # Flag if the number of s dim should be fixed for all modules (only for modular)
+  y_dim_lower: 1 # Lower bound for the number of y dim
+  y_dim_upper: 5 # Upper bound for the number of y dim
+  y_dim_step: 1 # Step size for the number of y dim
+  fixed_y_dim: false # Flag if the number of y dim should be fixed for all modules (only for modular)
+  latent_dim_lower: 1 # Lower bound for the number of latent dim/z
+  latent_dim_upper: 5 # Upper bound for the number of latent dim/z
+  latent_dim_step: 1 # Step size for the number of latent dim/z
+  batch_size_lower_n: 4 # Lower bound for the batch size (n**2)
+  batch_size_upper_n: 8 # Upper bound for the batch size (n**2)
+  max_epochs: 10 # Maximum number of epochs; currently early stopping is used
+  learning_rate_lower: 0.0001 # Lower bound for the learning rate
+  learning_rate_upper: 0.1 # Upper bound for the learning rate
+  fixed_learning_rate: true # Flag if the learning rate should be fixed for all modules (only for modular)
+  lstm_layers_lower: 1 # Lower bound for the number of LSTM layers
+  lstm_layers_upper: 4 # Upper bound for the number of LSTM layers
+  lstm_layers_step: 1 # Step size for the number of LSTM layers 
+  use_relative_correlation_error_for_optimization: false # Flag if the relative correlation error should be used for optimization in addition to the loss (optuna)
+  use_auc_for_optimization: false # Flag if the AUC should be used for optimization (optuna)
+training:
+  use_imputation_layer: true # Flag if the imputation layer should be used

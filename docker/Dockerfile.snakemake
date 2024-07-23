@@ -1,0 +1,48 @@
+# Dockerfile
+FROM python:3.11
+
+# Install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+# Add Poetry to PATH
+ENV PATH="/root/.local/bin:$PATH"
+
+# Install Snakemake
+RUN pip install snakemake
+
+# Install R and dependencies
+RUN apt-get update && \
+    apt-get install -y r-base r-base-dev
+
+# Install Miniforge
+RUN curl -sSL https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -o Miniforge3-Linux-x86_64.sh && \
+    bash Miniforge3-Linux-x86_64.sh -b -p /opt/conda && \
+    rm Miniforge3-Linux-x86_64.sh
+
+# Add Conda to PATH
+ENV PATH="/opt/conda/bin:$PATH"
+
+# Install Mamba (faster package manager)
+RUN conda install mamba -n base -c conda-forge
+
+# Copy project files
+COPY vambn /usr/src/app/vambn
+COPY vambn-r /usr/src/app/vambn-r
+COPY r-dependencies.R /usr/src/app/r-dependencies.R
+COPY pyproject.toml /usr/src/app/pyproject.toml
+COPY poetry.lock /usr/src/app/poetry.lock
+COPY snakemake_modules /usr/src/app/snakemake_modules
+COPY Snakefile /usr/src/app/Snakefile
+COPY README.md /usr/src/app/README.md
+COPY R.yml /usr/src/app/R.yml
+WORKDIR /usr/src/app
+
+# Install Python dependencies
+RUN poetry install || cat /root/.poetry/logs/install.log
+
+# Ensure Conda base and Poetry environments are activated by default
+RUN echo "source activate base" >> ~/.bashrc
+RUN echo "export PATH=/root/.local/bin:$PATH" >> ~/.bashrc
+RUN echo "alias snake='poetry run snakemake --use-conda'" >> ~/.bashrc
+
+CMD ["bash"]
