@@ -1,0 +1,17 @@
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Install MLflow and PostgreSQL client
+RUN pip install mlflow psycopg2-binary
+
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+
+# Define environment variables (this should point to the external PostgreSQL service)
+ENV MLFLOW_TRACKING_URI=postgresql://mlflow:mlflow@mlflow_postgres:5432/mlflow
+
+# Start MLflow server
+CMD mlflow server --port 5000 --host 0.0.0.0 --backend-store-uri ${MLFLOW_TRACKING_URI} --default-artifact-root /usr/src/app/mlruns

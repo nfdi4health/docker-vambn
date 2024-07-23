@@ -1,0 +1,123 @@
+[tool.poetry]
+name = "vambn"
+version = "1.0.0"
+description = ""
+authors = ["Manuel Lentzen <manuel.lentzen@scai.fraunhofer.de>", "Sophia Krix <sophia.krix@scai.fraunhofer.de>", "Diego Valderama <diego.felipe.valderrama.nino@scai.fraunhofer.de", "Tamara Raschka <tamara.raschka@scai.fraunhofer.de>"]
+readme = "README.md"
+packages = [{include = "vambn"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+optuna = "3.5.0"
+scikit-learn = "^1.2.1"
+ipykernel = "^6.20.2"
+torch = {version = "2.2.0+cu121", source = "torch"}
+torchvision = {version = "0.17.0+cu121", source = "torch"}
+mlflow = "^2.1.1"
+typer = "0.9.0"
+plotly = "^5.13.0"
+seaborn = "^0.12.2"
+matplotlib = "^3.7.0"
+snakemake = "^7.25.0"
+openpyxl = "^3.1.2"
+sqlalchemy = "1.4.46"
+protobuf = "3.20"
+plotnine = "^0.12.4"
+lightning = "^2.0.1"
+rope = "^1.7.0"
+kaleido = "0.2.1"
+lets-plot = "^4.0.1"
+cairosvg = "^2.7.1"
+typeguard = "^4.1.5"
+setuptools-cuda = "^0.0.6"
+torchmetrics = "^1.2.0"
+pydantic = "^2.4.2"
+pip = "^23.3.1"
+jupyter = "^1.0.0"
+wandb = "^0.16.0"
+tensorboardx = "^2.6.2.2"
+tensorboard = "^2.15.1"
+pymysql = "^1.1.0"
+dill = "^0.3.7"
+paramiko = "^3.3.1"
+pysftp = "^0.2.9"
+psycopg2-binary = "^2.9.9"
+qpth = "^0.0.16"
+sweetviz = "^2.3.1"
+pulp = "2.7"
+umap-learn = "^0.5.5"
+radian = "^0.6.12"
+syndat = "^0.0.2"
+mkdocs = "^1.6.0"
+mkdocs-material = "^9.5.28"
+mkdocstrings = "^0.25.1"
+mkdocstrings-python = "^1.10.5"
+pymdown-extensions = "^10.8.1"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.991"
+black = "^22.12.0"
+flake8 = "^6.0.0"
+commitizen = "^2.40.0"
+pytest = "^7.2.1"
+autopep8 = "^2.0.1"
+yapf = "^0.32.0"
+isort = "^5.11.4"
+pytest-xdist = "^3.2.0"
+autoflake = "^2.2.1"
+pytype = "^2023.10.31"
+pyre-check = "^0.9.19"
+ruff = "^0.1.5"
+rope = "^1.11.0"
+vulture = "^2.11"
+pyright = "^1.1.350"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "2.0.0"
+tag_format = "$version"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl"
+priority="explicit"
+
+[tool.ruff]
+line-length = 80
+fix = true
+indent-width = 4
+target-version = "py311"
+ignore-init-module-imports = true
+exclude = ["**/__init__.py"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 80
+ignore-overlong-task-comments = false
+max-doc-length = 80
+
+
+[tool.pytpye]
+disable=[
+"recursion-error",
+]
+
+
+# PEP 621 dependencies declaration
+# adapt to your dependencies manager
+[project]
+dependencies = [
+    "mkdocstrings-python",
+]

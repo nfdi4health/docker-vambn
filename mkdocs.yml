@@ -1,0 +1,48 @@
+site_name: VAMBN
+theme:
+  name: material
+  logo: vambn-icon.png
+  favicon: vambn-icon.png
+  palette:
+    primary: "teal"
+    accent: "lime"
+
+nav:
+  - Home: index.md
+  - VAMBN: vambn.md
+  - Setup: setup.md
+  - Walkthrough: walkthrough.md
+  - Configuration: configuration.md
+  - TroubleShooting: troubleshooting.md
+  - Python Reference:
+      - Introduction: python.md
+      - API Reference:
+          - Data: api/data.md
+          - Metrics: api/metrics.md
+          - Modelling:
+              - Distributions: api/modelling/distributions.md
+              - Models:
+                  - HIVAE: api/modelling/models/hivae.md
+              - MTL: api/modelling/mtl.md
+          - Utilities: api/utils.md
+          - Visualization: api/visualization.md
+  - R Reference: r.md
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.highlight
+
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        paths: [.]
+        options:
+          docstring_style: google
+          allow_inspection: true
+          show_submodules: true
+
+markdown_extensions:
+  - toc:
+      permalink: true

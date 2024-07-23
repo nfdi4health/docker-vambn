@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  snakemake:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.snakemake
+    volumes:
+      - ./vambn_config.yml:/usr/src/app/vambn_config.yml
+      - ./data:/usr/src/app/data
+      - ./reports:/usr/src/app/reports
+      - ./logs:/usr/src/app/logs
+    depends_on:
+      - postgres
+      - mlflow
+    networks:
+      - backend
+    entrypoint: tail -f /dev/null
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: vambn
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: optuna
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U vambn -d optuna" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint:
+      - sh
+      - -c
+      - docker-entrypoint.sh postgres
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.mlflow
+    volumes:
+      - mlflow_artifacts:/usr/src/app/mlruns
+    ports:
+      - "5000:5000"
+    depends_on:
+      mlflow_postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
+  mlflow_postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow
+      POSTGRES_DB: mlflow
+    volumes:
+      - mlflow_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U mlflow -d mlflow" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  mlflow_artifacts:
+  mlflow_postgres_data:
+
+
+networks:
+  backend:
