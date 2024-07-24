@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   snakemake:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.snakemake
+    image: ghcr.io/nfdi4health/docker-vambn/vambn:latest
     volumes:
       - ./vambn_config.yml:/usr/src/app/vambn_config.yml
       - ./data:/usr/src/app/data
@@ -38,9 +36,7 @@ services:
       - docker-entrypoint.sh postgres
 
   mlflow:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.mlflow
+    image: ghcr.io/nfdi4health/docker-vambn/mlflow:latest
     volumes:
       - mlflow_artifacts:/usr/src/app/mlruns
     ports:

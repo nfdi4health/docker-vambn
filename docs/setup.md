@@ -68,17 +68,16 @@ Ensure you have Docker and Docker Compose installed on your machine. You can ins
 
 ### Steps
 
-#### 1) Build and Run the Docker Containers
+#### 1) Run the Docker Containers
 
-Navigate to the directory containing your `docker-compose.yml` file and run the following command to build and start the Docker containers:
+Navigate to the directory containing your `docker-compose.yml` file and run the following command to start the Docker containers:
 
 ```bash
-docker compose up --build
+docker compose up -d
 ```
 
 This command will:
 
-- Build the Docker images specified in the `Dockerfile`.
 - Start the PostgreSQL container and initialize the `optuna` database automatically.
 - Start the MLflow server and the corresponding PostgreSQL container.
 - Start the Snakemake container with all dependencies installed.
