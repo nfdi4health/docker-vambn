@@ -2650,44 +2650,6 @@ files = [
 ]
 
 [[package]]
-name = "lets-plot"
-version = "4.3.3"
-description = "An open source library for statistical plotting"
-optional = false
-python-versions = "*"
-files = [
-    {file = "lets_plot-4.3.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:28ce5266b53611984dd62c3e04346eb8bc2c6b487df4639aad1240e47ab7c675"},
-    {file = "lets_plot-4.3.3-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:586b10348e0cf08dbf2412a8d7bf378c09ec4f378eb50d4d38108794db632a09"},
-    {file = "lets_plot-4.3.3-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8f82db7d53b847c98b92b90a7a0067a8961e79a20104726bf5189199a9c31f5b"},
-    {file = "lets_plot-4.3.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1cdcfc067a071099b5eecdfcd41769432d0c3dfaf165f4b8e598e518650c59a2"},
-    {file = "lets_plot-4.3.3-cp310-cp310-win_amd64.whl", hash = "sha256:8ab87e01a48df615f5b342bf93bf1e82148099cb5e93d22ec693e8729e06379a"},
-    {file = "lets_plot-4.3.3-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:570c97bc42fb07d1c06e290500a7f211ae6a8c2eec59c09b09d8e571e164d4d5"},
-    {file = "lets_plot-4.3.3-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:b672991a0925e3dbd931a7833f408b8e244a20c88ab60dfd527d71f1087c6a84"},
-    {file = "lets_plot-4.3.3-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c6dd08c8bade7e6243bf47c90af3e42378ac6e245ed51303cbd81d0926417199"},
-    {file = "lets_plot-4.3.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e23ac47cefd810e888fd91e03c3122f678a393a38d81cc67129771fd8674d081"},
-    {file = "lets_plot-4.3.3-cp311-cp311-win_amd64.whl", hash = "sha256:fecc4ffae73d2ea69ae2a077e49b4881b79bc186bfb8f65007fe61bc290892f3"},
-    {file = "lets_plot-4.3.3-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:7ccfd9974d74aa251ba0b72e1faf38d09cf4bc2d7a0813ee79929c9897a431d0"},
-    {file = "lets_plot-4.3.3-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:3e93930bc6a7855b31808234cba9f3ca02cba92d7fe2f42e77ead1ddadc605c3"},
-    {file = "lets_plot-4.3.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1f6989cf34d57fe0e1eefd1200417b4466177d65e8b1b5069d5c922b7db83c2b"},
-    {file = "lets_plot-4.3.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:04750533c98aa6681ef7d936e8a6967949d5e40240b6538266c821d2cfd120df"},
-    {file = "lets_plot-4.3.3-cp312-cp312-win_amd64.whl", hash = "sha256:a28d778338c3d78f04b38b254e0d918a9b97f018ca468808bd1d937239e6cbe4"},
-    {file = "lets_plot-4.3.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:7e3ec31eb88b3883ca2e0b2982ed9015c14c95342bad81e2a155e6519a466a41"},
-    {file = "lets_plot-4.3.3-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:d3e3db17746b8c134ab3c485cf5371af89025bdecfa04aee97468212fb4e184a"},
-    {file = "lets_plot-4.3.3-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:247e63600c73d093afa1654a032aa3b296179e06cce4ca14626bfde8ee1a9696"},
-    {file = "lets_plot-4.3.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8157c3be040e903f63a677aaa34ac587f20a22cbcd93bce858b2635520cee34b"},
-    {file = "lets_plot-4.3.3-cp38-cp38-win_amd64.whl", hash = "sha256:eaf432a1c676a28c37df7bc69a215732cbc4a46adc44e3bc598563bf4bf1d4b7"},
-    {file = "lets_plot-4.3.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:c06daef00b3aa2e25b757119e48b68ef079a58be6bcca8045cddd08f11edac46"},
-    {file = "lets_plot-4.3.3-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:03ecadd9099e90a0357172ca74ee4459fa713f53bb337201dc1e2e9da94deb4f"},
-    {file = "lets_plot-4.3.3-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7762e021eabf4b98e9742c229a27e8368cee919611fde4c86747759800a08901"},
-    {file = "lets_plot-4.3.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:64408d0f84c6086331f40bed27c40371fe8076e086c2a464b3f1c1847d2f9c26"},
-    {file = "lets_plot-4.3.3-cp39-cp39-win_amd64.whl", hash = "sha256:ce03907631f45f137a249628b7b094f0c78d0d1ffdf688c5d7993070a15c1698"},
-]
-
-[package.dependencies]
-palettable = "*"
-pypng = "*"
-
-[[package]]
 name = "libcst"
 version = "1.4.0"
 description = "A concrete syntax tree with AST-like properties for Python 3.0 through 3.12 programs."
@@ -4037,17 +3999,6 @@ files = [
 ]
 
 [[package]]
-name = "palettable"
-version = "3.3.3"
-description = "Color palettes for Python"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "palettable-3.3.3-py2.py3-none-any.whl", hash = "sha256:74e9e7d7fe5a9be065e02397558ed1777b2df0b793a6f4ce1a5ee74f74fb0caa"},
-    {file = "palettable-3.3.3.tar.gz", hash = "sha256:094dd7d9a5fc1cca4854773e5c1fc6a315b33bd5b3a8f47064928facaf0490a8"},
-]
-
-[[package]]
 name = "pandas"
 version = "2.2.2"
 description = "Powerful data structures for data analysis, time series, and statistics"
@@ -4305,17 +4256,6 @@ mic = ["olefile"]
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 typing = ["typing-extensions"]
 xmp = ["defusedxml"]
-
-[[package]]
-name = "pip"
-version = "23.3.2"
-description = "The PyPA recommended tool for installing Python packages."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "pip-23.3.2-py3-none-any.whl", hash = "sha256:5052d7889c1f9d05224cd41741acb7c5d6fa735ab34e339624a614eaaa7e7d76"},
-    {file = "pip-23.3.2.tar.gz", hash = "sha256:7fd9972f96db22c8077a1ee2691b172c8089b17a5652a44494a9ecb0d78f9149"},
-]
 
 [[package]]
 name = "plac"
@@ -4946,17 +4886,6 @@ files = [
 
 [package.extras]
 diagrams = ["jinja2", "railroad-diagrams"]
-
-[[package]]
-name = "pypng"
-version = "0.20220715.0"
-description = "Pure Python library for saving and loading PNG images"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pypng-0.20220715.0-py3-none-any.whl", hash = "sha256:4a43e969b8f5aaafb2a415536c1a8ec7e341cd6a3f957fd5b5f32a4cfeed902c"},
-    {file = "pypng-0.20220715.0.tar.gz", hash = "sha256:739c433ba96f078315de54c0db975aee537cbc3e1d0ae4ed9aab0ca1e427e2c1"},
-]
 
 [[package]]
 name = "pyre-check"
@@ -7612,4 +7541,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.12"
-content-hash = "34fc98dec0fb70141681800e3f8dcaa6fd9674ca5f79a0451a4668f799c733f7"
+content-hash = "74a6dccbfb7b6fb5f5ebd5483f397d66f32bfba5d326ff304e726d92c8e1b847"
