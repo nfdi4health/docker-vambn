@@ -1,18 +1,44 @@
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+dependencies = [ "mkdocstrings-python",]
+
 [tool.poetry]
 name = "vambn"
-version = "1.0.0"
+version = "2.0.0"
 description = ""
-authors = ["Manuel Lentzen <manuel.lentzen@scai.fraunhofer.de>", "Sophia Krix <sophia.krix@scai.fraunhofer.de>", "Diego Valderama <diego.felipe.valderrama.nino@scai.fraunhofer.de", "Tamara Raschka <tamara.raschka@scai.fraunhofer.de>"]
+authors = [ "Manuel Lentzen <manuel.lentzen@scai.fraunhofer.de>", "Sophia Krix <sophia.krix@scai.fraunhofer.de>", "Diego Valderama <diego.felipe.valderrama.nino@scai.fraunhofer.de", "Tamara Raschka <tamara.raschka@scai.fraunhofer.de>",]
 readme = "README.md"
-packages = [{include = "vambn"}]
+[[tool.poetry.packages]]
+include = "vambn"
+
+[[tool.poetry.source]]
+name = "torch"
+url = "https://download.pytorch.org/whl"
+priority = "explicit"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "2.0.0"
+tag_format = "v$version"
+
+[tool.ruff]
+line-length = 80
+fix = true
+indent-width = 4
+target-version = "py311"
+ignore-init-module-imports = true
+exclude = [ "**/__init__.py",]
+
+[tool.pytpye]
+disable = [ "recursion-error",]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 optuna = "3.5.0"
 scikit-learn = "^1.2.1"
-ipykernel = "^6.20.2"
-torch = {version = "2.2.0+cu121", source = "torch"}
-torchvision = {version = "0.17.0+cu121", source = "torch"}
 mlflow = "^2.1.1"
 typer = "0.9.0"
 plotly = "^5.13.0"
@@ -24,15 +50,12 @@ sqlalchemy = "1.4.46"
 protobuf = "3.20"
 plotnine = "^0.12.4"
 lightning = "^2.0.1"
-rope = "^1.7.0"
 kaleido = "0.2.1"
-lets-plot = "^4.0.1"
 cairosvg = "^2.7.1"
 typeguard = "^4.1.5"
 setuptools-cuda = "^0.0.6"
 torchmetrics = "^1.2.0"
 pydantic = "^2.4.2"
-pip = "^23.3.1"
 jupyter = "^1.0.0"
 wandb = "^0.16.0"
 tensorboardx = "^2.6.2.2"
@@ -54,6 +77,25 @@ mkdocstrings = "^0.25.1"
 mkdocstrings-python = "^1.10.5"
 pymdown-extensions = "^10.8.1"
 
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.poetry.dependencies.torch]
+version = "2.2.0+cu121"
+source = "torch"
+
+[tool.poetry.dependencies.torchvision]
+version = "0.17.0+cu121"
+source = "torch"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 80
+ignore-overlong-task-comments = false
+max-doc-length = 80
+
 [tool.poetry.group.dev.dependencies]
 mypy = "^0.991"
 black = "^22.12.0"
@@ -68,56 +110,7 @@ autoflake = "^2.2.1"
 pytype = "^2023.10.31"
 pyre-check = "^0.9.19"
 ruff = "^0.1.5"
-rope = "^1.11.0"
 vulture = "^2.11"
 pyright = "^1.1.350"
-
-[tool.commitizen]
-name = "cz_conventional_commits"
-version = "2.0.0"
-tag_format = "v$version"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[[tool.poetry.source]]
-name = "torch"
-url = "https://download.pytorch.org/whl"
-priority="explicit"
-
-[tool.ruff]
-line-length = 80
-fix = true
-indent-width = 4
-target-version = "py311"
-ignore-init-module-imports = true
-exclude = ["**/__init__.py"]
-
-[tool.ruff.format]
-quote-style = "double"
-
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-
-
-[tool.ruff.lint.pycodestyle]
-max-line-length = 80
-ignore-overlong-task-comments = false
-max-doc-length = 80
-
-
-[tool.pytpye]
-disable=[
-"recursion-error",
-]
-
-
-# PEP 621 dependencies declaration
-# adapt to your dependencies manager
-[project]
-dependencies = [
-    "mkdocstrings-python",
-]
+rope = "^1.13.0"
+ipykernel = "^6.29.5"

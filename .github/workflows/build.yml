@@ -30,7 +30,7 @@ jobs:
     
     - name: Get Version
       id: get_version
-      run: echo "VERSION=$(python .github/scripts/read_version.py)" >> $GITHUB_ENV
+      run: echo "VERSION=$(python .github/scripts/get_version.py)" >> $GITHUB_ENV
     
     - name: Build & Push Docker Image for mlflow
       uses: docker/build-push-action@v2
