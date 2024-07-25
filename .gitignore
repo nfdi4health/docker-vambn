@@ -294,3 +294,4 @@ testBase*/
 converted_data/
 .pyre/
 databases/
+.utils/
