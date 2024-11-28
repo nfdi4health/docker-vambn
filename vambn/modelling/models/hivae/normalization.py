@@ -18,7 +18,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 class NormalizationParameters:
     """
     Data class for normalization parameters, including mean and standard deviation.
-    
+
     This class is only used for the parameters of real and pos typed variables.
 
     Args:
@@ -105,6 +105,7 @@ class Normalization:
     """
     Class for normalization utilities, including broadcasting masks and normalizing/denormalizing data.
     """
+
     @staticmethod
     def _broadcast_mask(
         mask: torch.Tensor, variable_types: VarTypes
@@ -189,9 +190,15 @@ class Normalization:
                 new_x_i = torch.log1p(new_x_i)
             elif vtype.data_type == "cat":
                 # convert to one hot
-                new_x_i = torch.nn.functional.one_hot(
-                    new_x_i.long().squeeze(1), vtype.n_parameters
-                )
+                try:
+                    new_x_i = torch.nn.functional.one_hot(
+                        new_x_i.long().squeeze(1), vtype.n_parameters
+                    )
+                except Exception as e:
+                    logger.error(
+                        f"Error converting to one hot for {vtype}: {e}. Ensure that the input data starts from 0."
+                    )
+                    raise e
 
             if torch.isnan(new_x_i).any():
                 raise ValueError(

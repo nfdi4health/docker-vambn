@@ -512,6 +512,23 @@ def prepare_data(
                         # if isinstance(option, (int, float)):
                         #     option = float(option)
                         visit_data[column].fillna(option, inplace=True)
+
+                        # check that data starts with 0 if categorical
+                        if type == "cat" or type == "categorical":
+                            # Convert values to 0-based integers if they're not already
+                            unique_vals = sorted(visit_data[column].unique())
+                            if min(unique_vals) != 0:
+                                mapping = {
+                                    old: new
+                                    for new, old in enumerate(unique_vals)
+                                }
+                                visit_data[column] = visit_data[column].map(
+                                    mapping
+                                )
+                            logger.info(
+                                f"Converted {column} to 0-based integers: {sorted(visit_data[column].unique())}"
+                            )
+
                         logger.info(f"Imputed {column} with mode {option}.")
 
                 # check if there are still missing values
