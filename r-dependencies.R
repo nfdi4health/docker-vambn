@@ -1,6 +1,6 @@
 # Install remotes package if needed
 if (!requireNamespace("remotes", quietly = TRUE)) {
-    install.packages("remotes", repos = 'http://cran.rstudio.com/')
+    install.packages("remotes", repos = "http://cran.rstudio.com/")
 }
 
 # List of packages and versions
@@ -40,11 +40,10 @@ versions <- c(
     "2.1.1"
 )
 
-# Function to install package if not already installed or incorrect version
+# Function to install package if not already installed
 install_if_needed <- function(package, version) {
-    if (!requireNamespace(package, quietly = TRUE) || 
-        (packageVersion(package) != version)) {
-        remotes::install_version(package, version, repos = 'http://cran.rstudio.com/')
+    if (!requireNamespace(package, quietly = TRUE)) {
+        remotes::install_version(package, version, repos = "http://cran.rstudio.com/")
     }
 }
 
@@ -52,7 +51,6 @@ install_if_needed <- function(package, version) {
 for (i in 1:length(packages_to_install)) {
     install_if_needed(packages_to_install[i], versions[i])
 }
-
 
 # Load the libraries
 lapply(packages_to_install, require, character.only = TRUE)
