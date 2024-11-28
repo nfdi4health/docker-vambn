@@ -81,11 +81,11 @@ pymdown-extensions = "^10.8.1"
 quote-style = "double"
 
 [tool.poetry.dependencies.torch]
-version = "2.2.0+cu121"
+version = "2.2.0+cpu"
 source = "torch"
 
 [tool.poetry.dependencies.torchvision]
-version = "0.17.0+cu121"
+version = "0.17.0+cpu"
 source = "torch"
 
 [tool.ruff.lint.pydocstyle]
