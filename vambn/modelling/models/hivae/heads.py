@@ -230,8 +230,7 @@ class RealHead(BaseModuleHead[NormalParameters, dists.Normal]):
         super().__init__(variable_type, dim_s, dim_z, dim_y)
         self.loc_layer = ModifiedLinear(self.dim_y + self.dim_s, 1, bias=False)
         self.scale_layer = ModifiedLinear(self.dim_s, 1, bias=False)
-
-        self._parameter_class = NormalParameters
+        
         self._dist_class = dists.Normal
         self._n_pars = 2
 
