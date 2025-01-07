@@ -1,15 +1,21 @@
 [build-system]
-requires = [ "poetry-core",]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
-dependencies = [ "mkdocstrings-python",]
+name = "vambn"
+dependencies = ["mkdocstrings-python"]
 
 [tool.poetry]
 name = "vambn"
 version = "2.0.0"
 description = ""
-authors = [ "Manuel Lentzen <manuel.lentzen@scai.fraunhofer.de>", "Sophia Krix <sophia.krix@scai.fraunhofer.de>", "Diego Valderama <diego.felipe.valderrama.nino@scai.fraunhofer.de", "Tamara Raschka <tamara.raschka@scai.fraunhofer.de>",]
+authors = [
+    "Manuel Lentzen <manuel.lentzen@scai.fraunhofer.de>",
+    "Sophia Krix <sophia.krix@scai.fraunhofer.de>",
+    "Diego Valderama <diego.felipe.valderrama.nino@scai.fraunhofer.de",
+    "Tamara Raschka <tamara.raschka@scai.fraunhofer.de>",
+]
 readme = "README.md"
 [[tool.poetry.packages]]
 include = "vambn"
@@ -30,10 +36,10 @@ fix = true
 indent-width = 4
 target-version = "py311"
 ignore-init-module-imports = true
-exclude = [ "**/__init__.py",]
+exclude = ["**/__init__.py"]
 
 [tool.pytpye]
-disable = [ "recursion-error",]
+disable = ["recursion-error"]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
