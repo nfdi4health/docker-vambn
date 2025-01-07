@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "vambn"
-dependencies = ["mkdocstrings-python"]
+dependencies = ["mkdocstrings-python", "mkdocs-material @ git+https://github.com/squidfunk/mkdocs-material.git"]
 
 [tool.poetry]
 name = "vambn"
@@ -78,7 +78,6 @@ umap-learn = "^0.5.5"
 radian = "^0.6.12"
 syndat = "^0.0.2"
 mkdocs = "^1.6.0"
-mkdocs-material = "^9.5.28"
 mkdocstrings = "^0.27.0"
 mkdocstrings-python = "^1.10.5"
 pymdown-extensions = "^10.8.1"
