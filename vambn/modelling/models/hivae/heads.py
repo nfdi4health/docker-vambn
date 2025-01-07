@@ -25,9 +25,7 @@ DistributionType = TypeVar("DistributionType")
 
 
 # Model Classes
-class BaseModuleHead(
-    Generic[ParameterType, DistributionType], nn.Module, ABC
-):
+class BaseModuleHead(Generic[ParameterType, DistributionType], nn.Module, ABC):
     """Base class for different data types.
 
     Args:
@@ -234,6 +232,7 @@ class RealHead(BaseModuleHead[NormalParameters, dists.Normal]):
         self.scale_layer = ModifiedLinear(self.dim_s, 1, bias=False)
 
         self._parameter_class = NormalParameters
+        self._dist_class = dists.Normal
         self._n_pars = 2
 
     def forward(self, samples_z: Tensor, samples_s: Tensor) -> NormalParameters:
@@ -267,9 +266,7 @@ class RealHead(BaseModuleHead[NormalParameters, dists.Normal]):
         return self._dist
 
 
-class TruncatedNormalHead(
-    BaseModuleHead[NormalParameters, TruncatedNormal]
-):
+class TruncatedNormalHead(BaseModuleHead[NormalParameters, TruncatedNormal]):
     """
     Class representing the TruncatedNormalHead module.
 
@@ -356,9 +353,7 @@ class TruncatedNormalHead(
         return super().log_prob(data.clamp(min=1e-3), params)
 
 
-class PosHead(
-    BaseModuleHead[LogNormalParameters, dists.LogNormal]
-):
+class PosHead(BaseModuleHead[LogNormalParameters, dists.LogNormal]):
     """
     Head module for the LogNormal (pos) distribution
 
@@ -393,7 +388,9 @@ class PosHead(
         self._dist_class = dists.LogNormal
         self._n_pars = 2
 
-    def forward(self, samples_z: Tensor, samples_s: Tensor) -> LogNormalParameters:
+    def forward(
+        self, samples_z: Tensor, samples_s: Tensor
+    ) -> LogNormalParameters:
         """
         Performs the forward pass of the PosHead.
 
@@ -474,7 +471,9 @@ class CountHead(BaseModuleHead[PoissonParameters, dists.Poisson]):
         )
         self._dist_class = dists.Poisson
 
-    def forward(self, samples_z: Tensor, samples_s: Tensor) -> PoissonParameters:
+    def forward(
+        self, samples_z: Tensor, samples_s: Tensor
+    ) -> PoissonParameters:
         """Performs the forward pass of the CountHead.
 
         Args:
@@ -503,9 +502,7 @@ class CountHead(BaseModuleHead[PoissonParameters, dists.Poisson]):
 
 
 class CatHead(
-    BaseModuleHead[
-        CategoricalParameters, ReparameterizedCategorical
-    ]
+    BaseModuleHead[CategoricalParameters, ReparameterizedCategorical]
 ):
     """Class representing the categorical head of a model.
 
@@ -536,7 +533,9 @@ class CatHead(
         )
         self._dist_class = ReparameterizedCategorical
 
-    def forward(self, samples_z: Tensor, samples_s: Tensor) -> CategoricalParameters:
+    def forward(
+        self, samples_z: Tensor, samples_s: Tensor
+    ) -> CategoricalParameters:
         """Forward pass of the CatHead.
 
         Args:
