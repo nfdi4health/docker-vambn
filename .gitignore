@@ -277,21 +277,14 @@ data/raw/*
 .RData
 .Rhistory
 Rplots.pdf
-notebooks
-lossTest
-minMaxTest
-testing/
+notebooks/
 *reports*/
-*Reports*/
 
 vambn_config.yml # requires forced add; default values should not be overwritten
 poetry.lock
-testAltoida/
-testTexas/
-tmux-start.sh
 vambn_config_*
-testBase*/
 converted_data/
 .pyre/
 databases/
 .utils/
+db_data/
