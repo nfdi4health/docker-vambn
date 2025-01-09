@@ -40,6 +40,11 @@ These files are used as inputs to the VAMBN pipeline. The sections below describ
 
 The input file should contain a `SUBJID` column with the sample IDs and a `VISIT` column. For longitudinal data, encode visits from 1 to N based on their order. For static data, add a `VISIT` column with all values set to 1. Besides these two columns, include only the features specified in the grouping file.
 
+There are certain assumptions about the data:
+
+- VISIT is a continuous variable, starting from 1.
+- Categorical features are encoded as integers.
+
 *Hint: Refer to the generated input_texas.csv file if you are unsure.*
 
 ### Grouping File
@@ -52,9 +57,9 @@ The grouping file defines which features are encoded together by the HIVAE model
 |  Measure A   |       moduleA        |    real     |
 |  Measure B   |       moduleA        | categorical |
 |  Measure C   |       moduleB        |    count    |
-|  Measure D   |       moduleB        |   ordinal   |
+|  Measure D   |       moduleB        |   truncate_norm   |
 
-The `column_names` should match the columns in the input file. The `technical_group_name` can be any string consisting of letters and numbers ([a-zA-Z0-9]) without spaces or underscores. The `hivae_types` can be real, pos, categorical, count, or ordinal. For more details, refer to the [original paper](https://arxiv.org/abs/1807.03653).
+The `column_names` should match the columns in the input file. The `technical_group_name` can be any string consisting of letters and numbers ([a-zA-Z0-9]) without spaces or underscores. The `hivae_types` can be real, pos, categorical, count, or truncate_norm. For more details, refer to the [original paper](https://arxiv.org/abs/1807.03653). The truncate_norm type is an additional type that can be used for features that are normally distributed but have a lower bound.
 
 Features that **start with stalone_** appear in the Bayesian Network without being encoded/imputed by the HIVAE. Mean imputation is applied for continuous data, and mode imputation is used for the rest.
 
