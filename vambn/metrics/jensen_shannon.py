@@ -109,6 +109,13 @@ def jensen_shannon_distance(
         synthetic_binned = np.bincount(np.digitize(synthetic, n_bins))
     elif data_type == "cat" or data_type == "categorical":
         # Calculate probability distribution based on the frequency of each category
+        if (
+            synthetic.dtype == np.float64
+            or synthetic.dtype == np.float32
+            or synthetic.dtype == np.float16
+        ):
+            synthetic = synthetic.astype(int)
+
         categories = np.union1d(real, synthetic)
         real_binned = np.array(
             [np.sum(real == category) for category in categories]
