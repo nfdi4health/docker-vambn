@@ -49,6 +49,7 @@ dependencies = [
     "mkdocstrings (>=0.27.0,<0.28.0)",
     "pymdown-extensions (>=10.8.1,<11.0.0)",
     "mkdocs-autorefs (>=1.2.0,<2.0.0)",
+    "polars (>=1.21.0,<2.0.0)",
 ]
 
 [tool.poetry]
