@@ -94,6 +94,22 @@ def plot_study_results(study_uri: str, study_name: str, output_folder: Path):
         typer.echo(f"Plots saved in {output_folder}.")
     except RuntimeError:
         logger.error("No trials found in study or variance equals 0.")
+    except ValueError as e:
+        if (
+            "Cannot evaluate parameter importances with only a single trial."
+            in str(e)
+        ):
+            import matplotlib.pyplot as plt
+
+            fig, ax = plt.subplots()
+            ax.text(0.5, 0.5, str(e), fontsize=12, ha="center")
+            ax.axis("off")
+            fig.savefig(os.path.join(output_folder, "error_single_trial.png"))
+            logger.error(f"Error: {e}")
+            logger.error("Saved placeholder image in output folder.")
+            logger.error("Please extend the number of trials.")
+        else:
+            logger.error(f"An unexpected ValueError occurred: {e}")
 
 
 if __name__ == "__main__":
