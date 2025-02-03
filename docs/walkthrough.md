@@ -45,23 +45,23 @@ There are certain assumptions about the data:
 - VISIT is a continuous variable, starting from 1.
 - Categorical features are encoded as integers.
 
-*Hint: Refer to the generated input_texas.csv file if you are unsure.*
+_Hint: Refer to the generated input_texas.csv file if you are unsure._
 
 ### Grouping File
 
 The grouping file defines which features are encoded together by the HIVAE model. It should contain the following columns:
 
-| column_names | technical_group_name | hivae_types |
-| :----------: | :------------------: | :---------: |
-|     MMSE     |       stalone        |     pos     |
-|  Measure A   |       moduleA        |    real     |
-|  Measure B   |       moduleA        | categorical |
-|  Measure C   |       moduleB        |    count    |
-|  Measure D   |       moduleB        |   truncate_norm   |
+| column_names | technical_group_name |  hivae_types  |
+| :----------: | :------------------: | :-----------: |
+|     MMSE     |       stalone        |      pos      |
+|  Measure A   |       moduleA        |     real      |
+|  Measure B   |       moduleA        |  categorical  |
+|  Measure C   |       moduleB        |     count     |
+|  Measure D   |       moduleB        | truncate_norm |
 
 The `column_names` should match the columns in the input file. The `technical_group_name` can be any string consisting of letters and numbers ([a-zA-Z0-9]) without spaces or underscores. The `hivae_types` can be real, pos, categorical, count, or truncate_norm. For more details, refer to the [original paper](https://arxiv.org/abs/1807.03653). The truncate_norm type is an additional type that can be used for features that are normally distributed but have a lower bound.
 
-Features that **start with stalone_** appear in the Bayesian Network without being encoded/imputed by the HIVAE. Mean imputation is applied for continuous data, and mode imputation is used for the rest.
+Features that **start with stalone** appear in the Bayesian Network without being encoded/imputed by the HIVAE. Mean imputation is applied for continuous data, and mode imputation is used for the rest.
 
 ### Groups File
 
@@ -100,8 +100,8 @@ The pipeline consists of several stages:
 1. Setup: Installing R dependencies.
 2. Data Preprocessing: Preparing the data for subsequent rules.
 3. Optimization and Final Fitting: Training HIVAE models using either a traditional or modular approach.
-    - Traditional: One HIVAE is trained for each data module individually.
-    - Modular: A single model with different Encoders and Decoders connected via a shared layer.
+   - Traditional: One HIVAE is trained for each data module individually.
+   - Modular: A single model with different Encoders and Decoders connected via a shared layer.
 4. Bayesian Network Learning: Learning the network structure and generating plots.
 5. Generation of Synthetic Data: Generating synthetic data using the BN and the HIVAE models.
 6. Postprocessing: Calculating quality metrics and generating plots.

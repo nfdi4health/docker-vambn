@@ -86,7 +86,7 @@ def calculate_corr_error(
     # Read and process grouping data
     groups = pd.read_csv(grouping)
     subset = groups.loc[
-        ~groups["technical_group_name"].str.match("stalone_"), :
+        ~groups["technical_group_name"].str.startswith("stalone"), :
     ]
     continous_cols = set(
         subset.loc[
@@ -332,7 +332,7 @@ def generate_jsd_plot(
 
     grouping_df = pd.read_csv(grouping)
     module_cols = grouping_df.loc[
-        ~grouping_df["technical_group_name"].str.match("stalone_"),
+        ~grouping_df["technical_group_name"].str.startswith("stalone"),
         "column_names",
     ]
     module_cols = set(module_cols.to_list())
@@ -418,7 +418,7 @@ def calculate_auc(
 
     grouping_df = pd.read_csv(grouping)
     module_cols = grouping_df.loc[
-        ~grouping_df["technical_group_name"].str.match("stalone_"),
+        ~grouping_df["technical_group_name"].str.startswith("stalone"),
         "column_names",
     ]
     module_cols = set(module_cols.to_list())

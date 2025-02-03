@@ -168,12 +168,9 @@ def traditional_decoding(
     grouping = pd.read_csv(grouping_file)
     grouping = grouping.loc[
         grouping["technical_group_name"].isin([module_name])
-        | grouping["technical_group_name"].str.match("stalone_"),
+        | grouping["technical_group_name"].str.startswith("stalone"),
         :,
     ]
-
-    # stalone_idx = grouping["technical_group_name"].str.match("stalone_")
-    # vambn_grouping = grouping.loc[~stalone_idx, :]
 
     # Extract generated stalone data
     synthetic_metaenc = pd.read_csv(synthetic_metaenc)
@@ -418,13 +415,13 @@ def modular_decoding(
     else:
         selected_modules = modules_string.split(",")
 
-    # ensure that only the selected modules and those starting with "stalone_" are used
+    # ensure that only the selected modules and those starting with "stalone" are used
     grouping = grouping.loc[
         grouping["technical_group_name"].isin(selected_modules)
-        | grouping["technical_group_name"].str.match("stalone_"),
+        | grouping["technical_group_name"].str.startswith("stalone"),
         :,
     ]
-    stalone_idx = grouping["technical_group_name"].str.match("stalone_")
+    stalone_idx = grouping["technical_group_name"].str.startswith("stalone")
     vambn_grouping = grouping.loc[~stalone_idx, :]
 
     # Extract generated stalone data

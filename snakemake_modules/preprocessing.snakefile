@@ -86,6 +86,26 @@ rule checkInputAvailability:
         """
 
 
+rule checkInputSpecification:
+    input:
+        data="data/raw/input_{dataset_name}.csv",
+        grouping="data/raw/grouping_{dataset_name}.csv",
+        groups="data/raw/groups_{dataset_name}.txt",
+        blacklist="data/raw/blacklist_{dataset_name}.csv",
+        whitelist="data/raw/whitelist_{dataset_name}.csv",
+        start_dag="data/raw/startDag_{dataset_name}.csv",
+        script="vambn/data/make_data.py",
+        dependency_install=rules.setupEnv_all.input,
+    output:
+        indicator="{output_dir}/data/interim/spec_{dataset_name}",
+    log:
+        "logs/{output_dir}/check-specification_{dataset_name}.txt",
+    shell:
+        """
+        python -m vambn.data.make_data preprocessing check-specification {input.data} {input.grouping} {input.groups} {input.blacklist} {input.whitelist} {input.start_dag} {output} --log-file={log}
+        """
+
+
 rule Preprocessing:
     input:
         data=rules.checkInputAvailability.input.data,

@@ -11,6 +11,7 @@ from typing import List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import polars as pl
 import seaborn as sns
 import typer
 
@@ -231,6 +232,93 @@ def make(
     plt.savefig(output_path / "std_vs_std_norm.png")
 
     logger.info("Finished preprocessing data.")
+
+
+@preprocess_app.command()
+def check_specification(
+    data_file: Path,
+    grouping_file: Path,
+    groups_file: Path,
+    blacklist_file: Path,
+    whitelist_file: Path,
+    start_dag_file: Path,
+    indicator_file: Path,
+    log_file: Optional[Path] = None,
+):
+    setup_logging(level=10, log_file=log_file)
+
+    data = pl.read_csv(data_file, infer_schema_length=10000)
+    grouping = pl.read_csv(grouping_file, infer_schema_length=10000)
+    with groups_file.open("r") as f:
+        groups = f.read().splitlines()
+    blacklist = pl.read_csv(blacklist_file, infer_schema_length=10000)
+    whitelist = pl.read_csv(whitelist_file, infer_schema_length=10000)
+    start_dag = pl.read_csv(start_dag_file, infer_schema_length=10000)
+
+    logger.info("Data files read successfully.")
+
+    # Check if all column_names from the grouping file are present in the data file
+    assert all(
+        [col in data.columns for col in grouping["column_names"].to_list()]
+    ), "Not all columns from the grouping file are present in the data file"
+    logger.info(
+        "All columns from the grouping file are present in the data file."
+    )
+
+    # Check if all names in the groups file are present in the grouping file (technical_group_name)
+    assert all(
+        [
+            group in grouping["technical_group_name"].to_list()
+            for group in groups
+        ]
+    ), "Not all groups in the groups file are present in the grouping file"
+    logger.info(
+        "All groups in the groups file are present in the grouping file."
+    )
+
+    # Check if the whitelist and blacklist names are valid:
+    # Fetch column names of modules starting with stalone
+    stalone_cols = (
+        grouping.filter(
+            grouping["technical_group_name"].str.contains("stalone")
+        )
+        .select("column_names")["column_names"]
+        .to_list()
+    )
+
+    # Fetch module names of other modules
+    module_names = (
+        grouping.filter(
+            ~grouping["technical_group_name"].str.contains("stalone")
+        )
+        .select("technical_group_name")["technical_group_name"]
+        .to_list()
+    )
+
+    possible_names = module_names + stalone_cols
+
+    def check_list(df, possible_options):
+        existing_options = df["from"].to_list() + df["to"].to_list()
+        return all([option in possible_options for option in existing_options])
+
+    assert check_list(
+        blacklist, possible_names
+    ), "Not all blacklist names are valid"
+    logger.info("All blacklist names are valid.")
+    assert check_list(
+        whitelist, possible_names
+    ), "Not all whitelist names are valid"
+    logger.info("All whitelist names are valid.")
+    assert check_list(
+        start_dag, possible_names
+    ), "Not all start_dag names are valid"
+    logger.info("All start_dag names are valid.")
+
+    # Save the indicator file
+    indicator_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(indicator_file, "w") as f:
+        f.write("")
+    logger.info("Indicator file saved successfully.")
 
 
 def extract_module_characteristics(name: str) -> Tuple[str, str]:

@@ -98,7 +98,7 @@ rel_correlation_plot <- function(real_data, synthetic_data, file, method = "spea
 
 # Read and process data
 groups <- read.csv(args$grouping)
-subset <- groups[!grepl("stalone_", groups$technical_group_name), ]
+subset <- groups[!grepl("^stalone", groups$technical_group_name), ]
 continuous_cols <- c(subset[subset$hivae_types %in% c("pos", "real", "truncate_norm", "count", "gamma"), "column_names"], "VISIT", "SUBJID")
 module_cols <- c(subset$column_names, "VISIT", "SUBJID")
 
