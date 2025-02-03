@@ -12,6 +12,7 @@ import torch
 
 from vambn.data.dataclasses import VariableType
 from vambn.data.datasets import ModuleDataset, VambnDataset
+from sklearn.preprocessing import LabelEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -566,16 +567,43 @@ def prepare_data(
                     nclass = visit_data[column].nunique()
                     # check that data starts with 0 if categorical
                     if type == "cat" or type == "categorical":
-                        # Convert values to 0-based integers if they're not already
-                        unique_vals = sorted(visit_data[column].unique())
-                        if min(unique_vals) != 0:
-                            mapping = {
-                                old: new for new, old in enumerate(unique_vals)
-                            }
-                            visit_data[column] = visit_data[column].map(mapping)
+                        # Use a single LabelEncoder for all visits
+                        base_column_name = re.sub(r"_VIS\d+", "", column)
+                        if (
+                            f"{module_name}_{base_column_name}_label_encoder.pkl"
+                            not in globals()
+                        ):
+                            le = LabelEncoder()
+                            le.fit(visit_data[column].dropna())
+                            globals()[
+                                f"{module_name}_{base_column_name}_label_encoder.pkl"
+                            ] = le
+                        else:
+                            le = globals()[
+                                f"{module_name}_{base_column_name}_label_encoder.pkl"
+                            ]
+
+                        visit_data[column] = le.transform(visit_data[column])
                         logger.info(
                             f"Converted {column} to 0-based integers: {sorted(visit_data[column].unique())}"
                         )
+
+                        # Save the LabelEncoder for later usage
+                        with open(
+                            output_path
+                            / f"{module_name}_{base_column_name}_label_encoder.pkl",
+                            "wb",
+                        ) as f:
+                            print(
+                                f"Saving LabelEncoder for {module_name}_{base_column_name} to {output_path}"
+                            )
+                            pickle.dump(le, f)
+                    # Save the LabelEncoder in a dictionary for lookup
+                    if "label_encoders" not in globals():
+                        globals()["label_encoders"] = {}
+                    globals()["label_encoders"][
+                        f"{module_name}_{base_column_name}"
+                    ] = le
                     subset_filtered.loc[
                         subset_filtered["column_names"] == column, "dim"
                     ] = nclass

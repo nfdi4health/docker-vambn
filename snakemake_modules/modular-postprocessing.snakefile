@@ -115,7 +115,7 @@ rule all:
 
 rule CompareDistributions:
     input:
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
         decoded_data=rules.modular_modelling_GatherDecodedData.output.output_data,
         virtual_data=rules.modular_modelling_GenerateSyntheticData.output.output_data,
@@ -136,7 +136,7 @@ rule CompareDistributions:
 rule CalculateMetrics:
     input:
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         decoded_data=rules.modular_modelling_GatherDecodedData.output.output_data,
         virtual_data=rules.modular_modelling_GenerateSyntheticData.output.output_data,
         script="vambn-r/make_corrplot.R",
@@ -188,7 +188,7 @@ rule GenerateErrorPlot:
 rule JsdPlot_Vir:
     input:
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         virtual_data=rules.modular_modelling_GenerateSyntheticData.output.output_data,
         script="vambn/visualization/calculate_metrics.py",
     threads: 1
@@ -207,7 +207,7 @@ rule JsdPlot_Vir:
 rule JsdPlot_Dec:
     input:
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         decoded_data=rules.modular_modelling_GatherDecodedData.output.output_data,
         script="vambn/visualization/calculate_metrics.py",
     threads: 1
@@ -271,7 +271,7 @@ rule GenerateOptunaPlots:
 rule CalculateAuc:
     input:
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         decoded_data=rules.modular_modelling_GatherDecodedData.output.output_data,
         virtual_data=rules.modular_modelling_GenerateSyntheticData.output.output_data,
         script="vambn/visualization/calculate_metrics.py",
@@ -293,7 +293,7 @@ rule CalculateAuc:
 rule GenerateUmap:
     input:
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         decoded_data=rules.modular_modelling_GatherDecodedData.output.output_data,
         virtual_data=rules.modular_modelling_GenerateSyntheticData.output.output_data,
         script="vambn/visualization/generate_umap_plot.py",
@@ -315,7 +315,7 @@ rule GenerateUmap:
 rule GenerateTsne:
     input:
         grouping=rules.modular_modelling_preprocessing_Preprocessing.input.grouping,
-        original_data=rules.modular_modelling_preprocessing_ConcatRawFiles.output.concat,
+        original_data=rules.modular_modelling_preprocessing_ConcatAndConvertRawFiles.output.concat,
         decoded_data=rules.modular_modelling_GatherDecodedData.output.output_data,
         virtual_data=rules.modular_modelling_GenerateSyntheticData.output.output_data,
         script="vambn/visualization/generate_tsne_plot.py",

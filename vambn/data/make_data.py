@@ -503,6 +503,9 @@ def merge_stalone_data(
 def merge_raw_data(
     input_folder: Path,
     output_file: Path,
+    convert: bool = typer.Option(
+        False, help="Convert column types if necessary."
+    ),
     log_file: Optional[Path] = None,
     log_level: int = 20,
 ) -> None:
@@ -522,6 +525,23 @@ def merge_raw_data(
     overall_data = merge_csv_files(input_folder, list(input_files), "_raw.csv")
     # sort columns from overall data alphabetically
     overall_data = overall_data.reindex(sorted(overall_data.columns), axis=1)
+
+    if convert:
+        encoders = {}
+        for encoder_path in input_folder.glob("**/*_label_encoder.pkl"):
+            with open(encoder_path, "rb") as f:
+                encoder = pickle.load(f)
+                prefix = encoder_path.name.replace("_label_encoder.pkl", "")
+                column = "_".join(prefix.split("_")[1:])
+                encoders[column] = encoder
+                if column not in overall_data.columns:
+                    raise ValueError(
+                        f"Column {column} not found in overall_data."
+                    )
+                overall_data[column] = encoder.transform(
+                    overall_data[column].astype(str)
+                )
+
     overall_data.to_csv(output_file)
 
 

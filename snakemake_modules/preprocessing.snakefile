@@ -188,3 +188,22 @@ rule ConcatRawFiles:
         """
         python -m vambn.data.make_data preprocessing merge-raw-data {input.folder} {output}
         """
+
+
+rule ConcatAndConvertRawFiles:
+    input:
+        folder=rules.Preprocessing.output.folder,
+        script="vambn/data/make_data.py",
+    output:
+        concat="{output_dir}/data/processed/{dataset_name}/concatenated_raw_converted.csv",
+    wildcard_constraints:
+        dataset_name="[A-Za-z]+",
+        var="[A-Za-z]+",
+        mtl="[A-Za-z]+",
+    threads: 1
+    log:
+        "logs/{output_dir}/concat-raw_{dataset_name}.txt",
+    shell:
+        """
+        python -m vambn.data.make_data preprocessing merge-raw-data {input.folder} {output} --convert
+        """
