@@ -11,7 +11,6 @@ To get started, ensure you have Python 3.11 and [Poetry](https://python-poetry.o
 poetry env use path/to/your/python3.11
 
 # Next, run these commands:
-poetry shell
 poetry install
 ```
 
