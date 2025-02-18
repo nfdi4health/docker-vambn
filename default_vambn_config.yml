@@ -32,6 +32,9 @@ general:
       experiment_name: VAMBN2 # Name of the mlfow experiment
 optimization:
   folds: 3 # Number of folds for CV
+  early_stopping: true # Flag to enable early stopping
+  early_stopping_threshold: 0.0 # Threshold for early stopping
+  patience: 10 # Patience for early stopping
   n_traditional_trials: 3 # Number of trials for the traditional approach
   n_modular_trials: 3 # Number of trials for the modular approach
   s_dim_lower: 1 # Lower bound for the number of s dim
@@ -53,7 +56,7 @@ optimization:
   fixed_learning_rate: true # Flag if the learning rate should be fixed for all modules (only for modular)
   lstm_layers_lower: 1 # Lower bound for the number of LSTM layers
   lstm_layers_upper: 4 # Upper bound for the number of LSTM layers
-  lstm_layers_step: 1 # Step size for the number of LSTM layers 
+  lstm_layers_step: 1 # Step size for the number of LSTM layers
   use_relative_correlation_error_for_optimization: false # Flag if the relative correlation error should be used for optimization in addition to the loss (optuna)
   use_auc_for_optimization: false # Flag if the AUC should be used for optimization (optuna)
 training:

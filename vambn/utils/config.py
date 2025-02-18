@@ -44,6 +44,9 @@ class OptimizationConfig:
 
     Attributes:
         max_epochs (int): The maximum number of epochs.
+        early_stopping (bool): Whether to use early stopping during training.
+        early_stopping_threshold (float): The threshold value for early stopping criterion.
+        patience (int): The patience value for early stopping.
         folds (int): The number of folds for cross-validation.
         n_modular_trials (int): The number of trials for modular models.
         n_traditional_trials (int): The number of trials for traditional models.
@@ -71,6 +74,9 @@ class OptimizationConfig:
     """
 
     max_epochs: int
+    early_stopping: bool
+    early_stopping_threshold: float
+    patience: int
     folds: int
     n_modular_trials: int
     n_traditional_trials: int

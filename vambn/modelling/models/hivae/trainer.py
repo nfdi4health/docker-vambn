@@ -104,6 +104,9 @@ class Hyperparameters:
         mtl_methods (Tuple[str, ...], optional): Multi-task learning methods. Defaults to ("identity",).
         lstm_layers (int, optional): Number of LSTM layers. Defaults to 1.
         dim_ys (Optional[int], optional): Dimension of the output sequence. Defaults to None.
+        early_stopping (bool, optional): Whether to use early stopping. Defaults to False.
+        early_stopping_threshold (float, optional): Threshold for early stopping. Defaults to 0.01.
+        patience (int, optional): Number of epochs to wait before early stopping. Defaults to 10.
 
     Attributes:
         dim_s (int | Dict[str, int] | Tuple[int, ...]): Dimension(s) of the input sequence(s).
@@ -116,6 +119,9 @@ class Hyperparameters:
         mtl_methods (Tuple[str, ...]): Multi-task learning methods.
         lstm_layers (int): Number of LSTM layers.
         dim_ys (Optional[int]): Dimension of the output sequence.
+        early_stopping (bool): Whether to use early stopping.
+        early_stopping_threshold (float): Threshold for early stopping.
+        patience (int): Number of epochs to wait before early stopping.
 
     Methods:
         __post_init__(self): Post-initialization method.
@@ -134,6 +140,9 @@ class Hyperparameters:
     mtl_methods: Tuple[str, ...] = ("identity",)
     lstm_layers: int = 1
     dim_ys: Optional[int] = None
+    early_stopping: bool = False
+    early_stopping_threshold: float = 0.01
+    patience: int = 10
 
     def __post_init__(self):
         if isinstance(self.mtl_methods, List):
@@ -1109,6 +1118,9 @@ class TraditionalTrainer(
             batch_size=batch_size,
             learning_rate=learning_rate,
             epochs=opt.max_epochs,
+            early_stopping=opt.early_stopping,
+            early_stopping_threshold=opt.early_stopping_threshold,
+            patience=opt.patience,
             lstm_layers=lstm_layers,
             mtl_methods=mtl_methods,
         )
@@ -1148,6 +1160,7 @@ class TraditionalTrainer(
                 train_dataloader=whole_dataloader,
                 num_epochs=best_parameters.epochs,
                 learning_rate=best_parameters.learning_rate,
+                early_stopping=False,
             )
         return self.model
 
@@ -1207,6 +1220,9 @@ class TraditionalTrainer(
                         val_dataloader=val_dataloader,
                         num_epochs=trial_params.epochs,
                         learning_rate=trial_params.learning_rate,
+                        early_stopping=trial_params.early_stopping,
+                        early_stopping_threshold=trial_params.early_stopping_threshold,
+                        patience=trial_params.patience,
                     )
                 except ValueError:
                     raise optuna.TrialPruned(
@@ -1653,6 +1669,7 @@ class ModularTrainer(
                 train_dataloader=whole_dataloader,
                 num_epochs=best_parameters.epochs,
                 learning_rate=learning_rate,
+                early_stopping=False,
             )
         return self.model
 
@@ -1716,6 +1733,9 @@ class ModularTrainer(
                         val_dataloader=val_dataloader,
                         num_epochs=trial_params.epochs,
                         learning_rate=learning_rate,
+                        early_stopping=trial_params.early_stopping,
+                        early_stopping_threshold=trial_params.early_stopping_threshold,
+                        patience=trial_params.patience,
                     )
                 except ValueError:
                     raise optuna.TrialPruned(

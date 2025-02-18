@@ -189,6 +189,9 @@ class AbstractModel(
         num_epochs: int,
         learning_rate: LearningRateInput,
         val_dataloader: Optional[DataLoader] = None,
+        early_stopping: bool = False,
+        early_stopping_threshold: float = 0.0,
+        patience: int = 10,
     ) -> Tuple[float, int]:
         """
         Fit the model to the training data.
@@ -198,6 +201,9 @@ class AbstractModel(
             num_epochs (int): Number of epochs to train.
             learning_rate (LearningRateInput): Learning rate for the optimizer.
             val_dataloader (Optional[DataLoader], optional): DataLoader for validation data. Defaults to None.
+            early_stopping (bool, optional): Whether to use early stopping. Defaults to False.
+            early_stopping_threshold (float, optional): Threshold for early stopping. Defaults to 0.0.
+            patience (int, optional): Number of epochs to wait for improvement before stopping. Defaults to 10.
 
         Returns:
             Tuple[float, int]: Best validation loss and number of epochs trained.
@@ -315,6 +321,9 @@ class AbstractNormalModel(
         num_epochs: int,
         learning_rate: float,
         val_dataloader: Optional[DataLoader] = None,
+        early_stopping: bool = False,
+        early_stopping_threshold: float = 0.0,
+        patience: int = 10,
     ) -> Tuple[float, int]:
         """Fit the HIVAE model"""
         if num_epochs <= 0:
@@ -343,10 +352,11 @@ class AbstractNormalModel(
         # use early stopping if val_dataloader is not None
         if val_dataloader is not None:
             best_loss = float("inf")
-            patience = 0
+            patience_counter = 0
         else:
             best_loss = None
-            patience = None
+            patience_counter = None
+
         for current_epoch in tqdm(range(num_epochs), total=num_epochs):
             mlflow.log_metric("epoch", current_epoch, step=current_epoch)
             avg_loss, losses = self._training_epoch(
@@ -363,26 +373,26 @@ class AbstractNormalModel(
                 val_loss = self._validation_epoch(val_dataloader)
                 mlflow.log_metric("val_loss", val_loss, step=current_epoch)
 
-                if val_loss < best_loss:
+                if val_loss < best_loss - early_stopping_threshold:
                     best_loss = val_loss
-                    patience = 0
+                    patience_counter = 0
                 else:
-                    patience += 1
+                    patience_counter += 1
 
-                if patience == 10:
+                if patience_counter >= patience and early_stopping:
                     logger.info("Early stopping")
                     break
 
         if val_dataloader is not None:
             val_loss = self._validation_epoch(val_dataloader)
-            if val_loss < best_loss:
+            if val_loss < best_loss - early_stopping_threshold:
                 best_loss = val_loss
-                patience = 0
+                patience_counter = 0
 
         if best_loss is not None:
             best_epoch = (
-                current_epoch - patience
-                if patience is not None
+                current_epoch - patience_counter
+                if patience_counter is not None
                 else current_epoch
             )
             if not isinstance(best_loss, float):
@@ -510,6 +520,9 @@ class AbstractModularModel(
         num_epochs: int,
         learning_rate: Tuple[float, ...],
         val_dataloader: DataLoader | None = None,
+        early_stopping: bool = False,
+        early_stopping_threshold: float = 0.0,
+        patience: int = 10,
     ) -> Tuple[float, int]:
         """
         Fit the model to the training data.
@@ -517,8 +530,11 @@ class AbstractModularModel(
         Args:
             train_dataloader (DataLoader): DataLoader for training data.
             num_epochs (int): Number of epochs to train.
-            learning_rate (float): Learning rate for the optimizer.
+            learning_rate (Tuple[float]): Learning rates for the optimizers.
             val_dataloader (Optional[DataLoader], optional): DataLoader for validation data. Defaults to None.
+            early_stopping (bool, optional): Whether to use early stopping. Defaults to False.
+            early_stopping_threshold (float, optional): Threshold for early stopping. Defaults to 0.0.
+            patience (int, optional): Number of epochs to wait for improvement before stopping. Defaults to 10.
 
         Returns:
             Tuple[float, int]: Best validation loss and number of epochs trained.
@@ -536,10 +552,10 @@ class AbstractModularModel(
 
         if val_dataloader is not None:
             best_loss = float("inf")
-            patience = 0
+            patience_counter = 0
         else:
             best_loss = None
-            patience = None
+            patience_counter = None
 
         for current_epoch in tqdm(range(num_epochs), total=num_epochs):
             mlflow.log_metric("epoch", current_epoch, step=current_epoch)
@@ -557,25 +573,26 @@ class AbstractModularModel(
                 val_loss = self._validation_epoch(val_dataloader)
                 mlflow.log_metric("val_loss", val_loss, step=current_epoch)
 
-                if val_loss < best_loss:
+                if val_loss < best_loss - early_stopping_threshold:
                     best_loss = val_loss
-                    patience = 0
+                    patience_counter = 0
                 else:
-                    patience += 1
+                    patience_counter += 1
 
-                if patience == 10:
+                if patience_counter >= patience and early_stopping:
                     logger.info("Early stopping")
                     break
+
         if val_dataloader is not None:
             val_loss = self._validation_epoch(val_dataloader)
-            if val_loss < best_loss:
+            if val_loss < best_loss - early_stopping_threshold:
                 best_loss = val_loss
-                patience = 0
+                patience_counter = 0
 
         if best_loss is not None:
             best_epoch = (
-                current_epoch - patience
-                if patience is not None
+                current_epoch - patience_counter
+                if patience_counter is not None
                 else current_epoch
             )
             if not isinstance(best_loss, float):
@@ -928,6 +945,9 @@ class AbstractGanModel(
         num_epochs: int,
         learning_rate: float,
         val_dataloader: DataLoader | None = None,
+        early_stopping: bool = False,
+        early_stopping_threshold: float = 0.0,
+        patience: int = 10,
     ) -> Tuple[float, int]:
         """
         Fit the model to the training data.
@@ -937,6 +957,9 @@ class AbstractGanModel(
             num_epochs (int): Number of epochs to train.
             learning_rate (float): Learning rate for the optimizer.
             val_dataloader (Optional[DataLoader], optional): DataLoader for validation data. Defaults to None.
+            early_stopping (bool, optional): Whether to use early stopping. Defaults to False.
+            early_stopping_threshold (float, optional): Threshold for early stopping. Defaults to 0.0.
+            patience (int, optional): Number of epochs to wait for improvement before stopping. Defaults to 10.
 
         Returns:
             Tuple[float, int]: Best validation loss and number of epochs trained.
@@ -971,13 +994,13 @@ class AbstractGanModel(
         if val_dataloader is not None:
             val_dataloader = self.fabric.setup_dataloaders(val_dataloader)
 
-            # use early stopping if val_dataloader is not None
+        # use early stopping if val_dataloader is not None
         if val_dataloader is not None:
             best_loss = float("inf")
-            patience = 0
+            patience_counter = 0
         else:
             best_loss = None
-            patience = None
+            patience_counter = None
 
         for current_epoch in tqdm(range(num_epochs), total=num_epochs):
             mlflow.log_metric("epoch", current_epoch, step=current_epoch)
@@ -994,25 +1017,26 @@ class AbstractGanModel(
                 val_loss = self._validation_epoch(val_dataloader)
                 mlflow.log_metric("val_loss", val_loss, step=current_epoch)
 
-                if val_loss < best_loss:
+                if val_loss < best_loss - early_stopping_threshold:
                     best_loss = val_loss
-                    patience = 0
+                    patience_counter = 0
                 else:
-                    patience += 1
+                    patience_counter += 1
 
-                if patience == 10:
+                if patience_counter >= patience and early_stopping:
                     logger.info("Early stopping")
                     break
+
         if val_dataloader is not None:
             val_loss = self._validation_epoch(val_dataloader)
-            if val_loss < best_loss:
+            if val_loss < best_loss - early_stopping_threshold:
                 best_loss = val_loss
-                patience = 0
+                patience_counter = 0
 
         if best_loss is not None:
             best_epoch = (
-                current_epoch - patience
-                if patience is not None
+                current_epoch - patience_counter
+                if patience_counter is not None
                 else current_epoch
             )
             if not isinstance(best_loss, float):
@@ -1390,6 +1414,9 @@ class AbstractGanModularModel(
         num_epochs: int,
         learning_rate: Tuple[float],
         val_dataloader: DataLoader | None = None,
+        early_stopping: bool = False,
+        early_stopping_threshold: float = 0.0,
+        patience: int = 10,
     ) -> Tuple[float, int]:
         """
         Fit the model to the training data.
@@ -1399,6 +1426,9 @@ class AbstractGanModularModel(
             num_epochs (int): Number of epochs to train.
             learning_rate (Tuple[float]): Learning rates for the optimizers.
             val_dataloader (Optional[DataLoader], optional): DataLoader for validation data. Defaults to None.
+            early_stopping (bool, optional): Whether to use early stopping. Defaults to False.
+            early_stopping_threshold (float, optional): Threshold for early stopping. Defaults to 0.0.
+            patience (int, optional): Number of epochs to wait for improvement before stopping. Defaults to 10.
 
         Returns:
             Tuple[float, int]: Best validation loss and number of epochs trained.
@@ -1452,10 +1482,10 @@ class AbstractGanModularModel(
         # use early stopping if val_dataloader is not None
         if val_dataloader is not None:
             best_loss = float("inf")
-            patience = 0
+            patience_counter = 0
         else:
             best_loss = None
-            patience = None
+            patience_counter = None
 
         for current_epoch in tqdm(range(num_epochs), total=num_epochs):
             mlflow.log_metric("epoch", current_epoch, step=current_epoch)
@@ -1474,25 +1504,26 @@ class AbstractGanModularModel(
                 val_loss = self._validation_epoch(val_dataloader)
                 mlflow.log_metric("val_loss", val_loss, step=current_epoch)
 
-                if val_loss < best_loss:
+                if val_loss < best_loss - early_stopping_threshold:
                     best_loss = val_loss
-                    patience = 0
+                    patience_counter = 0
                 else:
-                    patience += 1
+                    patience_counter += 1
 
-                if patience == 10:
+                if patience_counter >= patience and early_stopping:
                     logger.info("Early stopping")
                     break
+
         if val_dataloader is not None:
             val_loss = self._validation_epoch(val_dataloader)
-            if val_loss < best_loss:
+            if val_loss < best_loss - early_stopping_threshold:
                 best_loss = val_loss
-                patience = 0
+                patience_counter = 0
 
         if best_loss is not None:
             best_epoch = (
-                current_epoch - patience
-                if patience is not None
+                current_epoch - patience_counter
+                if patience_counter is not None
                 else current_epoch
             )
             if not isinstance(best_loss, float):
