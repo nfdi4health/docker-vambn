@@ -73,9 +73,9 @@ rule Optimize:
     params:
         experiment_name=lambda x: f"modular_{x.shared}_{x.dataset_name}_{x.var}_{x.mtl}_{config['general']['logging']['mlflow']['experiment_name']}",
         n_trials=config["optimization"]["n_modular_trials"],
-        checkpoint_path="{output_dir}/optimization/modular_{shared}_{dataset_name}_{var}_{mtl}/checkpoints",
+        checkpoint_path="{output_dir}/optimization/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/checkpoints",
         database=(
-            "{output_dir}/optimization/modular_{shared}_{dataset_name}_{var}_{mtl}/optuna.db"
+            "{output_dir}/optimization/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/optuna.db"
             if config["general"]["optuna_db"] is None
             else config["general"]["optuna_db"]
         ),
@@ -83,8 +83,8 @@ rule Optimize:
         python_command="srun python" if config["snakemake"]["use_slurm"] else "python",
     threads: 8
     log:
-        base="logs/{output_dir}/opt_modular_{shared}_{dataset_name}_{var}_{mtl}.txt",
-        stdout="logs/{output_dir}/opt_modular_{shared}_{dataset_name}_{var}_{mtl}.stdout",
+        base="logs/{output_dir}/opt_{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}.txt",
+        stdout="logs/{output_dir}/opt_{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}.stdout",
     wildcard_constraints:
         dataset_name="[A-Za-z]+",
         var="[A-Za-z]+",
@@ -94,7 +94,7 @@ rule Optimize:
         runtime="48h",
         mem_mb=8000,
     output:
-        parameter_file="{output_dir}/optimization/modular_{shared}_{dataset_name}_{var}_{mtl}/optimization_results.json",
+        parameter_file="{output_dir}/optimization/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/optimization_results.json",
     shell:
         """
         performed_trials=$(python -m vambn.utils.trial_counter {params.database} {params.experiment_name})
@@ -115,13 +115,13 @@ rule Train:
     wildcard_constraints:
         dataset_name="[A-Za-z]*",
     params:
-        checkpoint_path="{output_dir}/fit/modular_{shared}_{dataset_name}_{var}_{mtl}/checkpoints",
+        checkpoint_path="{output_dir}/fit/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/checkpoints",
         cli_arg=lambda x: "gan_train" if x.var == "wgan" else "train",
         python_command="srun python" if config["snakemake"]["use_slurm"] else "python",
     threads: 8
     log:
-        base="logs/{output_dir}/fit_modular_{shared}_{dataset_name}_{var}_{mtl}.txt",
-        stdout="logs/{output_dir}/fit_modular_{shared}_{dataset_name}_{var}_{mtl}.stdout",
+        base="logs/{output_dir}/fit_{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}.txt",
+        stdout="logs/{output_dir}/fit_{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}.stdout",
     resources:
         runtime="12h",
         mem_mb=8000,
@@ -132,13 +132,13 @@ rule Train:
         output_dir="[A-Za-z0-9]+",
         loss_mode="[A-Za-z]+",
     output:
-        results="{output_dir}/fit/modular_{shared}_{dataset_name}_{var}_{mtl}/overall_metrics.csv",
+        results="{output_dir}/fit/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/overall_metrics.csv",
         decoded_folder=directory(
-            "{output_dir}/fit/modular_{shared}_{dataset_name}_{var}_{mtl}"
+            "{output_dir}/fit/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}"
         ),
-        metaenc="{output_dir}/fit/modular_{shared}_{dataset_name}_{var}_{mtl}/data_outputs/meta_enc.csv",
-        model_file="{output_dir}/fit/modular_{shared}_{dataset_name}_{var}_{mtl}/model.bin",
-        trainer_file="{output_dir}/fit/modular_{shared}_{dataset_name}_{var}_{mtl}/trainer.pkl",
+        metaenc="{output_dir}/fit/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/data_outputs/meta_enc.csv",
+        model_file="{output_dir}/fit/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/model.bin",
+        trainer_file="{output_dir}/fit/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/trainer.pkl",
     shell:
         """
         {params.python_command} -m vambn.modelling.run_model modular {params.cli_arg} {input.config} {wildcards.shared} {input.data} {threads} \
@@ -159,7 +159,7 @@ rule GatherDecodedData:
         output_dir="[A-Za-z0-9]+",
         loss_mode="[A-Za-z]+",
     output:
-        output_data="{output_dir}/decoded/modular_{shared}_{dataset_name}_{var}_{mtl}/data.csv",
+        output_data="{output_dir}/decoded/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/data.csv",
     shell:
         """
         python -m vambn.data.make_data gather modular {input.decoded_folder} {input.stalone_data} {output.output_data}
@@ -201,12 +201,12 @@ rule GenerateBayesianNetwork:
         r_env=config["snakemake"]["r_env"],
     output:
         output_dir=directory(
-            "{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/"
+            "{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/"
         ),
-        bn_out="{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/bn.rds",
-        bootstrap_out="{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/bootstrap_strength.csv",
-        likelihood_real="{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/likelihood_real.csv",
-        bn_data="{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/bn_data.rds",
+        bn_out="{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/bn.rds",
+        bootstrap_out="{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/bootstrap_strength.csv",
+        likelihood_real="{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/likelihood_real.csv",
+        bn_data="{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/bn_data.rds",
     threads: 8
     conda:
         config["snakemake"]["r_env"]
@@ -251,8 +251,8 @@ rule GenerateSyntheticPatients:
     conda:
         config["snakemake"]["r_env"]
     output:
-        encodings="{output_dir}/synthetic/modular_{shared}_{dataset_name}_{var}_{mtl}/synthetic_meta_enc.csv",
-        likelihood_synthetic="{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/likelihood_synthetic.csv",
+        encodings="{output_dir}/synthetic/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/synthetic_meta_enc.csv",
+        likelihood_synthetic="{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/likelihood_synthetic.csv",
     shell:
         """
         if [ {params.r_module} != "None" ]; then
@@ -278,7 +278,7 @@ rule GenerateSyntheticData:
     wildcard_constraints:
         dataset_name="[A-Za-z]*",
     output:
-        output_data="{output_dir}/synthetic/modular_{shared}_{dataset_name}_{var}_{mtl}/data.csv",
+        output_data="{output_dir}/synthetic/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/data.csv",
     shell:
         """
         variable=$(tr '\n' ',' < {input.groups})
@@ -302,9 +302,9 @@ rule GenerateSyndatData:
         output_dir="[A-Za-z0-9]+",
         shared="[a-zA-Z0-9]+",
     output:
-        raw_syndat="{output_dir}/syndat/modular_{shared}_{dataset_name}_{var}_{mtl}/raw_syndat.csv",
-        decoded_syndat="{output_dir}/syndat/modular_{shared}_{dataset_name}_{var}_{mtl}/decoded_syndat.csv",
-        synthetic_syndat="{output_dir}/syndat/modular_{shared}_{dataset_name}_{var}_{mtl}/synthetic_syndat.csv",
+        raw_syndat="{output_dir}/syndat/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/raw_syndat.csv",
+        decoded_syndat="{output_dir}/syndat/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/decoded_syndat.csv",
+        synthetic_syndat="{output_dir}/syndat/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/synthetic_syndat.csv",
     shell:
         """
         python {input.file} {input.original} {input.decoded} {input.synthetic} {output.raw_syndat} {output.decoded_syndat} {output.synthetic_syndat}

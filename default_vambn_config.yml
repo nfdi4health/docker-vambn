@@ -2,6 +2,9 @@ snakemake:
   use_slurm: false # Flag if slurm is available (e.g. on Loewenburg)
   with_gan: false # Flag if GAN approach should be used in addition to the normal training
   with_mtl: false # Flag if multitask learning should be used in addition to the normal training
+  modules:
+    use_traditional: true
+    use_modular: true
   output_dir: "reports" # Output directory for the reports
   bn: # Bayesian network configuration; Does not need to be changed
     refactor: true

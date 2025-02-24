@@ -98,14 +98,16 @@ rule Preprocessing:
         script="vambn/data/make_data.py",
         dependency_install=rules.setupEnv_all.input,
     output:
-        folder=directory("{output_dir}/data/processed/{dataset_name}/split"),
+        folder=directory(
+            "{output_dir}/data/{model_variant,modular|traditional}_processed/{dataset_name}/split"
+        ),
     wildcard_constraints:
         dataset_name="[A-Za-z]+",
         var="[A-Za-z]+",
         mtl="[A-Za-z]+",
     threads: 1
     log:
-        "logs/{output_dir}/preprocessing_{dataset_name}.txt",
+        "logs/{output_dir}/preprocessing_{model_variant,modular|traditional}_{dataset_name}.txt",
     shell:
         """
         python -m vambn.data.make_data preprocessing make {input.data} {input.grouping} {input.groups} {input.preprocessing_config} {output.folder} --log-file={log}
@@ -117,15 +119,15 @@ rule ConcatImputedFiles:
         folder=rules.Preprocessing.output.folder,
         script="vambn/data/make_data.py",
     output:
-        concat="{output_dir}/data/processed/{dataset_name}/concatenated_imputed.csv",
-        transformed="{output_dir}/data/processed/{dataset_name}/concatenated_imputed_transformed.csv",
+        concat="{output_dir}/data/{model_variant,modular|traditional}_processed/{dataset_name}/concatenated_imputed.csv",
+        transformed="{output_dir}/data/{model_variant,modular|traditional}_processed/{dataset_name}/concatenated_imputed_transformed.csv",
     wildcard_constraints:
         dataset_name="[A-Za-z]+",
         var="[A-Za-z]+",
         mtl="[A-Za-z]+",
     threads: 1
     log:
-        "logs/{output_dir}/concat-imputed_{dataset_name}.txt",
+        "logs/{output_dir}/concat-imputed_{model_variant,modular|traditional}_{dataset_name}.txt",
     shell:
         """
         python -m vambn.data.make_data preprocessing merge-imputed-data {input.folder} {output}
@@ -137,14 +139,14 @@ rule ConcatStaloneFiles:
         folder=rules.Preprocessing.output.folder,
         script="vambn/data/make_data.py",
     output:
-        concat="{output_dir}/data/processed/{dataset_name}/concatenated_stalone.csv",
+        concat="{output_dir}/data/{model_variant,modular|traditional}_processed/{dataset_name}/concatenated_stalone.csv",
     wildcard_constraints:
         dataset_name="[A-Za-z]+",
         var="[A-Za-z]+",
         mtl="[A-Za-z]+",
     threads: 1
     log:
-        "logs/{output_dir}/concat-stalone_{dataset_name}.txt",
+        "logs/{output_dir}/concat-stalone_{model_variant,modular|traditional}_{dataset_name}.txt",
     shell:
         """
         python -m vambn.data.make_data preprocessing merge-stalone-data {input.folder} {output}
@@ -156,14 +158,14 @@ rule ConcatRawFiles:
         folder=rules.Preprocessing.output.folder,
         script="vambn/data/make_data.py",
     output:
-        concat="{output_dir}/data/processed/{dataset_name}/concatenated_raw.csv",
+        concat="{output_dir}/data/{model_variant,modular|traditional}_processed/{dataset_name}/concatenated_raw.csv",
     wildcard_constraints:
         dataset_name="[A-Za-z]+",
         var="[A-Za-z]+",
         mtl="[A-Za-z]+",
     threads: 1
     log:
-        "logs/{output_dir}/concat-raw_{dataset_name}.txt",
+        "logs/{output_dir}/concat-raw_{model_variant,modular|traditional}_{dataset_name}.txt",
     shell:
         """
         python -m vambn.data.make_data preprocessing merge-raw-data {input.folder} {output}

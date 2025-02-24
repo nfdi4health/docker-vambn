@@ -76,9 +76,9 @@ rule Optimize:
     params:
         experiment_name=lambda x: f"traditional_{x.dataset_name}_{x.module}_{x.var}_{x.mtl}_{config['general']['logging']['mlflow']['experiment_name']}",
         n_trials=config["optimization"]["n_traditional_trials"],
-        checkpoint_path="{output_dir}/optimization/traditional_{dataset_name}_{var}_{mtl}/{module}/checkpoints",
+        checkpoint_path="{output_dir}/optimization/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/checkpoints",
         database=(
-            "{output_dir}/optimization/traditional_{dataset_name}_{var}_{mtl}/{module}/optuna.db"
+            "{output_dir}/optimization/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/optuna.db"
             if config["general"]["optuna_db"] is None
             else config["general"]["optuna_db"]
         ),
@@ -86,8 +86,8 @@ rule Optimize:
         python_command="srun python" if config["snakemake"]["use_slurm"] else "python",
     threads: 6
     log:
-        base="logs/{output_dir}/opt_traditional_{dataset_name}_{var}_{mtl}_{module}.txt",
-        stdout="logs/{output_dir}/opt_traditional_{dataset_name}_{var}_{mtl}_{module}.stdout",
+        base="logs/{output_dir}/opt_{model_variant,traditional}_{dataset_name}_{var}_{mtl}_{module}.txt",
+        stdout="logs/{output_dir}/opt_{model_variant,traditional}_{dataset_name}_{var}_{mtl}_{module}.stdout",
     resources:
         runtime="48h",
         mem_mb=8000,
@@ -98,7 +98,7 @@ rule Optimize:
         output_dir="[A-Za-z0-9]+",
         module="[A-Za-z_0-9]+",
     output:
-        parameter_file="{output_dir}/optimization/traditional_{dataset_name}_{var}_{mtl}/{module}/optimization_results.json",
+        parameter_file="{output_dir}/optimization/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/optimization_results.json",
     shell:
         """
         performed_trials=$(python -m vambn.utils.trial_counter {params.database} {params.experiment_name})
@@ -119,7 +119,7 @@ def get_opt_files(wildcards):
     modules = [f"{x}" for x in groups for i in range(1)]
 
     return [
-        f"{wildcards.output_dir}/optimization/traditional_{wildcards.dataset_name}/{module}/optimization_results.json"
+        f"{wildcards.output_dir}/optimization/{model_variant, traditional}_{wildcards.dataset_name}/{module}/optimization_results.json"
         for module in modules
     ]
 
@@ -128,7 +128,7 @@ rule GetOptFiles:
     input:
         get_opt_files,
     output:
-        opt_files="{output_dir}/optimization/traditional_{dataset_name}_{var}_{mtl}/.performed_optimization",
+        opt_files="{output_dir}/optimization/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/.performed_optimization",
 
 
 rule Train:
@@ -138,7 +138,7 @@ rule Train:
         script="vambn/modelling/run_model.py",
         parameter_file=rules.Optimize.output.parameter_file,
     params:
-        checkpoint_path="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}/checkpoints",
+        checkpoint_path="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/checkpoints",
         cli_arg=lambda x: "gan_train" if x.var == "wgan" else "ltrain",
         python_command="srun python" if config["snakemake"]["use_slurm"] else "python",
     threads: 6
@@ -153,19 +153,19 @@ rule Train:
         mem_mb=8000,
         runtime="8h",
     log:
-        base="logs/{output_dir}/fit_traditional_{dataset_name}_{var}_{mtl}_{module}.txt",
-        stdout="logs/{output_dir}/fit_traditional_{dataset_name}_{var}_{mtl}_{module}.stdout",
+        base="logs/{output_dir}/fit_{model_variant,traditional}_{dataset_name}_{var}_{mtl}_{module}.txt",
+        stdout="logs/{output_dir}/fit_{model_variant,traditional}_{dataset_name}_{var}_{mtl}_{module}.stdout",
     output:
-        results="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}/overall_metrics.csv",
-        metaenc="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}/data_outputs/meta_enc.csv",
+        results="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/overall_metrics.csv",
+        metaenc="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/data_outputs/meta_enc.csv",
         decoded_folder=directory(
-            "{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}"
+            "{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}"
         ),
         data_outputs=directory(
-            "{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}/data_outputs"
+            "{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/data_outputs"
         ),
-        model_file="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}/model.bin",
-        trainer_file="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/{module}/trainer.pkl",
+        model_file="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/model.bin",
+        trainer_file="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}/trainer.pkl",
     shell:
         """
         {params.python_command} -m vambn.modelling.run_model hivae {params.cli_arg} {wildcards.module} {input.config} {input.data}    {threads} \
@@ -198,7 +198,7 @@ rule GatherDecodedData:
         mtl="[A-Za-z]+",
     threads: 1
     output:
-        output_data="{output_dir}/decoded/traditional_{dataset_name}_{var}_{mtl}/data.csv",
+        output_data="{output_dir}/decoded/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/data.csv",
     shell:
         """
         python -m vambn.data.make_data gather traditional {input.decoded_folder} {input.stalone_data} {output.output_data}
@@ -213,7 +213,7 @@ def get_result_files(wildcards):
     modules = [f"{x}" for x in groups for i in range(1)]
 
     return [
-        f"{wildcards.output_dir}/fit/traditional_{wildcards.dataset_name}_{wildcards.var}_{wildcards.mtl}/{module}/overall_metrics.csv"
+        f"{wildcards.output_dir}/fit/{model_variant, traditional}_{wildcards.dataset_name}_{wildcards.var}_{wildcards.mtl}/{module}/overall_metrics.csv"
         for module in modules
     ]
 
@@ -222,7 +222,7 @@ rule MergeResults:
     input:
         files=get_result_files,
     output:
-        results="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/overall_metrics.csv",
+        results="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/overall_metrics.csv",
     threads: 1
     wildcard_constraints:
         module="[a-zA-Z0-9]*",
@@ -259,7 +259,7 @@ rule MergeEncodings:
         dataset_name="[A-Za-z]*",
         module="[a-zA-Z0-9]*",
     output:
-        metaenc="{output_dir}/fit/traditional_{dataset_name}_{var}_{mtl}/meta_enc.csv",
+        metaenc="{output_dir}/fit/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/meta_enc.csv",
     threads: 1
     wildcard_constraints:
         dataset_name="[A-Za-z]+",
@@ -306,11 +306,13 @@ rule GenerateBayesianNetwork:
         r_module=config["snakemake"]["cluster_modules"]["R"],
         r_env=config["snakemake"]["r_env"],
     output:
-        output_dir=directory("{output_dir}/bn/traditional_{dataset_name}_{var}_{mtl}/"),
-        bn_out="{output_dir}/bn/traditional_{dataset_name}_{var}_{mtl}/bn.rds",
-        bootstrap_out="{output_dir}/bn/traditional_{dataset_name}_{var}_{mtl}/bootstrap_strength.csv",
-        likelihood_out="{output_dir}/bn/traditional_{dataset_name}_{var}_{mtl}/likelihood_real.csv",
-        bn_data="{output_dir}/bn/traditional_{dataset_name}_{var}_{mtl}/bn_data.rds",
+        output_dir=directory(
+            "{output_dir}/bn/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/"
+        ),
+        bn_out="{output_dir}/bn/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/bn.rds",
+        bootstrap_out="{output_dir}/bn/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/bootstrap_strength.csv",
+        likelihood_out="{output_dir}/bn/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/likelihood_real.csv",
+        bn_data="{output_dir}/bn/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/bn_data.rds",
     threads: 8
     resources:
         time="12:00:00",
@@ -364,8 +366,8 @@ rule GenerateSyntheticPatients:
     conda:
         config["snakemake"]["r_env"]
     output:
-        encodings="{output_dir}/synthetic/traditional_{dataset_name}_{var}_{mtl}/synthetic_meta_enc.csv",
-        likelihood_synthetic="{output_dir}/bn/traditional_{dataset_name}_{var}_{mtl}/likelihood_synthetic.csv",
+        encodings="{output_dir}/synthetic/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/synthetic_meta_enc.csv",
+        likelihood_synthetic="{output_dir}/bn/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/likelihood_synthetic.csv",
     shell:
         """
         if [ {params.r_module} != "None" ]; then
@@ -395,7 +397,7 @@ rule GenerateSyntheticData:
         cli_arg=lambda x: "gan_decode" if x.var == "wgan" else "ldecode",
         python_command="srun python" if config["snakemake"]["use_slurm"] else "python",
     output:
-        output_data="{output_dir}/synthetic/traditional_{dataset_name}_{var}_{mtl}/{module}_data.csv",
+        output_data="{output_dir}/synthetic/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/{module}_data.csv",
     shell:
         """
         {params.python_command} -m vambn.modelling.run_model hivae {params.cli_arg} {wildcards.module} {input.folder} \
@@ -427,7 +429,7 @@ rule MergeDecodedData:
         mtl="[A-Za-z]+",
         output_dir="[A-Za-z0-9]+",
     output:
-        output_data="{output_dir}/synthetic/traditional_{dataset_name}_{var}_{mtl}/data.csv",
+        output_data="{output_dir}/synthetic/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/data.csv",
     run:
         import pandas as pd
         from functools import reduce
@@ -465,9 +467,9 @@ rule GenerateSyndatData:
         mtl="[A-Za-z]+",
         output_dir="[A-Za-z0-9]+",
     output:
-        raw_syndat="{output_dir}/syndat/traditional_{dataset_name}_{var}_{mtl}/raw_syndat.csv",
-        decoded_syndat="{output_dir}/syndat/traditional_{dataset_name}_{var}_{mtl}/decoded_syndat.csv",
-        synthetic_syndat="{output_dir}/syndat/traditional_{dataset_name}_{var}_{mtl}/synthetic_syndat.csv",
+        raw_syndat="{output_dir}/syndat/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/raw_syndat.csv",
+        decoded_syndat="{output_dir}/syndat/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/decoded_syndat.csv",
+        synthetic_syndat="{output_dir}/syndat/{model_variant,traditional}_{dataset_name}_{var}_{mtl}/synthetic_syndat.csv",
     shell:
         """
         python {input.file} {input.original} {input.decoded} {input.synthetic} {output.raw_syndat} {output.decoded_syndat} {output.synthetic_syndat}

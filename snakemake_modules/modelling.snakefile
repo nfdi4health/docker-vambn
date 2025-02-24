@@ -21,24 +21,26 @@ configfile: "vambn_config.yml"
 ruleorder: modular_preprocessing_setupEnv_setupR > traditional_preprocessing_setupEnv_setupR > modular_preprocessing_Preprocessing > traditional_preprocessing_Preprocessing > modular_preprocessing_ConcatImputedFiles > traditional_preprocessing_ConcatImputedFiles > modular_preprocessing_ConcatStaloneFiles > traditional_preprocessing_ConcatStaloneFiles
 
 
-module modular:
-    snakefile:
-        "modular-modelling.snakefile"
-    config:
-        config
+if config["snakemake"]["modules"]["use_modular"]:
+
+    module modular:
+        snakefile:
+            "modular-modelling.snakefile"
+        config:
+            config
+
+    use rule * from modular as modular_*
 
 
-module traditional:
-    snakefile:
-        "traditional-modelling.snakefile"
-    config:
-        config
+if config["snakemake"]["modules"]["use_traditional"]:
 
+    module traditional:
+        snakefile:
+            "traditional-modelling.snakefile"
+        config:
+            config
 
-use rule * from modular as modular_*
-
-
-use rule * from traditional as traditional_*
+    use rule * from traditional as traditional_*
 
 
 ################################################################################
@@ -47,8 +49,15 @@ use rule * from traditional as traditional_*
 
 
 # Rule to generate all possible outputs
+# Collect targets from active modules
+all_inputs = []
+if config["snakemake"]["modules"]["use_modular"]:
+    all_inputs.extend(expand("modular_out/{sample}.processed", sample=config["samples"]))
+if config["snakemake"]["modules"]["use_traditional"]:
+    all_inputs.extend(expand("traditional_out/{sample}.analyzed", sample=config["samples"]))
+
+
 rule all:
     input:
-        rules.modular_all.input,
-        rules.traditional_all.input,
-    default_target: True
+        all_inputs,
+    default_target: True  # Explicitly mark as default

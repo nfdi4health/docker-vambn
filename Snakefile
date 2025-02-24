@@ -18,27 +18,34 @@ configfile: "vambn_config.yml"
 ################################################################################
 
 
-ruleorder: modular_modular_modelling_preprocessing_setupEnv_setupR > traditional_traditional_modelling_preprocessing_setupEnv_setupR > modular_modular_modelling_preprocessing_Preprocessing > traditional_traditional_modelling_preprocessing_Preprocessing > modular_modular_modelling_preprocessing_ConcatImputedFiles > traditional_traditional_modelling_preprocessing_ConcatImputedFiles > modular_modular_modelling_preprocessing_ConcatStaloneFiles > traditional_traditional_modelling_preprocessing_ConcatStaloneFiles > modular_modular_modelling_preprocessing_ConcatRawFiles > traditional_traditional_modelling_preprocessing_ConcatRawFiles > modular_modular_modelling_preprocessing_setupEnv_initializeMlflowExperiment > traditional_traditional_modelling_preprocessing_setupEnv_initializeMlflowExperiment
+if config["snakemake"]["modules"]["use_modular"]:
+
+    module modular:
+        snakefile:
+            "snakemake_modules/modular-postprocessing.snakefile"
+        config:
+            config
+
+    use rule * from modular as modular_*
 
 
-module modular:
-    snakefile:
-        "snakemake_modules/modular-postprocessing.snakefile"
-    config:
-        config
+if config["snakemake"]["modules"]["use_traditional"]:
+
+    module traditional:
+        snakefile:
+            "snakemake_modules/traditional-postprocessing.snakefile"
+        config:
+            config
+
+    use rule * from traditional as traditional_*
 
 
-module traditional:
-    snakefile:
-        "snakemake_modules/traditional-postprocessing.snakefile"
-    config:
-        config
+if (
+    config["snakemake"]["modules"]["use_traditional"]
+    and config["snakemake"]["modules"]["use_modular"]
+):
 
-
-use rule * from modular as modular_*
-
-
-use rule * from traditional as traditional_*
+    ruleorder: modular_modular_modelling_preprocessing_setupEnv_setupR > traditional_traditional_modelling_preprocessing_setupEnv_setupR > modular_modular_modelling_preprocessing_Preprocessing > traditional_traditional_modelling_preprocessing_Preprocessing > modular_modular_modelling_preprocessing_ConcatImputedFiles > traditional_traditional_modelling_preprocessing_ConcatImputedFiles > modular_modular_modelling_preprocessing_ConcatStaloneFiles > traditional_traditional_modelling_preprocessing_ConcatStaloneFiles > modular_modular_modelling_preprocessing_ConcatRawFiles > traditional_traditional_modelling_preprocessing_ConcatRawFiles > modular_modular_modelling_preprocessing_setupEnv_initializeMlflowExperiment > traditional_traditional_modelling_preprocessing_setupEnv_initializeMlflowExperiment
 
 
 ################################################################################
@@ -47,10 +54,17 @@ use rule * from traditional as traditional_*
 
 
 # Rule to generate all possible outputs
+# Collect targets from active modules
+module_inputs = []
+if config["snakemake"]["modules"]["use_modular"]:
+    module_inputs.extend(rules.modular_all.input)
+if config["snakemake"]["modules"]["use_traditional"]:
+    module_inputs.extend(rules.traditional_all.input)
+
+
 rule all:
     input:
-        rules.modular_all.input,
-        rules.traditional_all.input,
+        module_inputs,
         expand(
             "{output_dir}/metrics/{dataset}_aggregated_metrics.csv",
             dataset=config["snakemake"]["DATASETS"],
@@ -59,17 +73,29 @@ rule all:
     default_target: True
 
 
-MODULES = [
-    "modular_concatMtl",
-    "modular_concatIndiv",
-    "modular_none",
-    "modular_avgMtl",
-    "modular_maxMtl",
-    "modular_sharedLinear",
-    "modular_encoderMtl",
-    "modular_encoder",
-    "traditional",
-]
+MODULES = []
+
+MODULES = []
+if config["snakemake"]["modules"]["use_modular"]:
+    MODULES.extend(
+        [
+            "modular_concatMtl",
+            "modular_concatIndiv",
+            "modular_none",
+            "modular_avgMtl",
+            "modular_maxMtl",
+            "modular_sharedLinear",
+            "modular_encoderMtl",
+            "modular_encoder",
+        ]
+    )
+if config["snakemake"]["modules"]["use_traditional"]:
+    MODULES.extend(
+        [
+            "traditional",
+        ]
+    )
+
 
 VARS = ["wogan", "wgan"] if config["snakemake"]["with_gan"] else ["wogan"]
 MTLS = ["womtl", "wmtl"] if config["snakemake"]["with_mtl"] else ["womtl"]

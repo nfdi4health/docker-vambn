@@ -124,9 +124,9 @@ rule CompareDistributions:
     wildcard_constraints:
         dataset_name="[A-Za-z]*",
     output:
-        complete="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}/distributions.pdf",
-        decoded_only="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}/distributions_onlydecoded.pdf",
-        metric_file="{output_dir}/metrics/modular_{shared}_{dataset_name}_{var}_{mtl}/jsd_metrics.json",
+        complete="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/distributions.pdf",
+        decoded_only="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/distributions_onlydecoded.pdf",
+        metric_file="{output_dir}/metrics/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/jsd_metrics.json",
     shell:
         """
         python -m vambn.visualization.distribution {input.original_data} {input.decoded_data} {input.virtual_data} {output} {input.grouping} {wildcards.dataset_name} {wildcards.var}_{wildcards.mtl}
@@ -146,13 +146,13 @@ rule CalculateMetrics:
     conda:
         config["snakemake"]["r_env"]
     output:
-        all_virtual="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_heatmap_virtual_all.pdf",
-        all_decoded="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_heatmap_decoded_all.pdf",
-        cont_virtual="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_heatmap_virtual_cont.pdf",
-        cont_decoded="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_heatmap_decoded_cont.pdf",
-        results="{output_dir}/metrics/modular_{shared}_{dataset_name}_{var}_{mtl}/corr_metrics.json",
+        all_virtual="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_heatmap_virtual_all.pdf",
+        all_decoded="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_heatmap_decoded_all.pdf",
+        cont_virtual="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_heatmap_virtual_cont.pdf",
+        cont_decoded="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_heatmap_decoded_cont.pdf",
+        results="{output_dir}/metrics/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/corr_metrics.json",
     log:
-        "{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_heatmap.log",
+        "{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_heatmap.log",
     shell:
         """
         Rscript vambn-r/make_corrplot.R {input.grouping} {input.original_data} {input.decoded_data} {input.virtual_data} {output} {wildcards.dataset_name} {wildcards.var}_{wildcards.mtl} > {log} 2>&1
@@ -176,9 +176,9 @@ rule GenerateErrorPlot:
     resources:
         runtime="10m",
     output:
-        plot="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_error.png",
+        plot="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_error.png",
     log:
-        "{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_error.log",
+        "{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_error.log",
     shell:
         """
         python -m vambn.visualization.generate_jsd_plot {input.results} {output.plot} > {log} 2>&1
@@ -195,9 +195,9 @@ rule JsdPlot_Vir:
     wildcard_constraints:
         dataset_name="[A-Za-z]*",
     output:
-        "{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_jsd_vir.png",
+        "{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_jsd_vir.png",
     log:
-        "{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_jsd_vir.log",
+        "{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_jsd_vir.log",
     shell:
         """
         python -m vambn.visualization.calculate_metrics generate-jsd-plot {input.grouping} {input.original_data} {input.virtual_data} {output} > {log} 2>&1
@@ -214,9 +214,9 @@ rule JsdPlot_Dec:
     wildcard_constraints:
         dataset_name="[A-Za-z]*",
     output:
-        "{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_jsd_dec.png",
+        "{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_jsd_dec.png",
     log:
-        "{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_jsd_dec.log",
+        "{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_jsd_dec.log",
     shell:
         """
         python -m vambn.visualization.calculate_metrics generate-jsd-plot {input.grouping} {input.original_data} {input.decoded_data} {output} > {log} 2>&1
@@ -236,7 +236,7 @@ rule GenerateGraph:
     conda:
         config["snakemake"]["r_env"]
     output:
-        "{output_dir}/bn/modular_{shared}_{dataset_name}_{var}_{mtl}/clean_graph.svg",
+        "{output_dir}/bn/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/clean_graph.svg",
     shell:
         """
         if [ {params.r_module} != "None" ]; then
@@ -254,14 +254,14 @@ rule GenerateOptunaPlots:
     threads: 1
     params:
         experiment_name=lambda x: f"modular_{x.shared}_{x.dataset_name}_{x.var}_{x.mtl}_{config['general']['logging']['mlflow']['experiment_name']}",
-        database="sqlite:///{output_dir}/optimization/modular_{shared}_{dataset_name}_{var}_{mtl}/optuna.db"
+        database="sqlite:///{output_dir}/optimization/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/optuna.db"
         if config["general"]["optuna_db"] is None
         else config["general"]["optuna_db"],
     wildcard_constraints:
         dataset_name="[A-Za-z]*",
     output:
         folder=directory(
-            "{output_dir}/optimization/modular_{shared}_{dataset_name}_{var}_{mtl}/study_plots"
+            "{output_dir}/optimization/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/study_plots"
         ),
     shell:
         """
@@ -283,7 +283,7 @@ rule CalculateAuc:
         mtl="[A-Za-z]+",
         output_dir="[A-Za-z0-9]+",
     output:
-        metric_file="{output_dir}/metrics/modular_{shared}_{dataset_name}_{var}_{mtl}/auc_metrics.csv",
+        metric_file="{output_dir}/metrics/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}/auc_metrics.csv",
     shell:
         """
         python -m vambn.visualization.calculate_metrics calculate-auc {input.grouping} {input.original_data} {input.decoded_data} {input.virtual_data} {output}
@@ -305,8 +305,8 @@ rule GenerateUmap:
         mtl="[A-Za-z]+",
         output_dir="[A-Za-z0-9]+",
     output:
-        decoded_file="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_umap_decoded.png",
-        virtual_file="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_umap_virtual.png",
+        decoded_file="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_umap_decoded.png",
+        virtual_file="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_umap_virtual.png",
     shell:
         """
         python -m vambn.visualization.generate_umap_plot {input.grouping} {input.original_data} {input.decoded_data} {input.virtual_data} {output}
@@ -327,8 +327,8 @@ rule GenerateTsne:
         mtl="[A-Za-z]+",
         output_dir="[A-Za-z0-9]+",
     output:
-        decoded_file="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_tsne_decoded.png",
-        virtual_file="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_tsne_virtual.png",
+        decoded_file="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_tsne_decoded.png",
+        virtual_file="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_tsne_virtual.png",
     shell:
         """
         python -m vambn.visualization.generate_tsne_plot {input.grouping} {input.original_data} {input.decoded_data} {input.virtual_data} {output}
@@ -348,7 +348,7 @@ rule GenerateJsdByModule:
         output_dir="[A-Za-z0-9]*",
         shared="[A-Za-z]*",
     output:
-        output_plot="{output_dir}/figures/modular_{shared}_{dataset_name}_{var}_{mtl}_jsd_by_module.png",
+        output_plot="{output_dir}/figures/{model_variant,modular}_{shared}_{dataset_name}_{var}_{mtl}_jsd_by_module.png",
     shell:
         """
         python -m vambn.visualization.jsd_by_module {input.jsd_metrics} {input.grouping} {output.output_plot}
