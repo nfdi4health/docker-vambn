@@ -344,7 +344,7 @@ class AbstractNormalModel(
             num_epochs=num_epochs,
         )
         self, optimizer = self.fabric.setup(self, optimizer)
-        self.fabric.clip_gradients(self, optimizer, max_norm=1.0)
+        self.fabric.clip_gradients(self, optimizer, max_norm=2.0, norm_type=2)
         train_dataloader = self.fabric.setup_dataloaders(train_dataloader)
         if val_dataloader is not None:
             val_dataloader = self.fabric.setup_dataloaders(val_dataloader)
@@ -989,7 +989,9 @@ class AbstractGanModel(
         self = out[0]
         optimizers = out[1:]
         for optimizer in optimizers:
-            self.fabric.clip_gradients(self, optimizer, max_norm=1.0)
+            self.fabric.clip_gradients(
+                self, optimizer, max_norm=2.0, norm_type=2
+            )
         train_dataloader = self.fabric.setup_dataloaders(train_dataloader)
         if val_dataloader is not None:
             val_dataloader = self.fabric.setup_dataloaders(val_dataloader)
@@ -1466,7 +1468,9 @@ class AbstractGanModularModel(
         flattened_optimizers = list(out[1:])
         # append two None values to the end of the list to match the length of the optimizers
         for optimizer in flattened_optimizers:
-            self.fabric.clip_gradients(self, optimizer, max_norm=1.0)
+            self.fabric.clip_gradients(
+                self, optimizer, max_norm=2.0, norm_type=2
+            )
         flattened_optimizers.extend(
             [None, None] if self.model.shared_element.has_params else [None] * 3
         )
