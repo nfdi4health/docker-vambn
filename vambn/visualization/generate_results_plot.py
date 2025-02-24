@@ -258,56 +258,109 @@ def merge_results(
     )
 
     # Plot the results
-    plot = (
-        ggplot(
-            merged, aes(x="metric_type", y="normalized_value", fill="data_type")
+    variants = merged["overall_variant"].unique()
+    if len(variants) > 1:
+        plot = (
+            ggplot(
+                merged,
+                aes(x="metric_type", y="normalized_value", fill="data_type"),
+            )
+            + geom_bar(stat="identity", position="dodge")
+            + facet_wrap("~overall_variant", scales="free", ncol=4)
+            + labs(x="Metric", y="Quality Score", fill="Data type")
+            + ylim(0, 100)
+            + theme_bw()
+            + theme(
+                axis_text_x=element_text(angle=45, hjust=1),
+                strip_text_x=element_text(size=8),
+                legend_position="top",
+            )
         )
-        + geom_bar(stat="identity", position="dodge")
-        + facet_wrap("~overall_variant", scales="free", ncol=4)
-        + labs(x="Metric", y="Quality Score", fill="Data type")
-        + ylim(0, 100)
-        + theme_bw()
-        + theme(
-            axis_text_x=element_text(angle=45, hjust=1),
-            strip_text_x=element_text(size=8),
-            legend_position="top",
-        )
-    )
-    nrow = len(merged["overall_variant"].unique()) // 4
-    height = 8 * nrow
+        nrow = len(merged["overall_variant"].unique()) // 4
+        height = 8 * nrow
 
-    plot.save(output_plot, width=29, height=height, units="cm", limitsize=False)
+        plot.save(
+            output_plot, width=29, height=height, units="cm", limitsize=False
+        )
 
-    plot = (
-        ggplot(
-            merged_auc_jsd,
-            aes(x="metric_type", y="normalized_value", fill="data_type"),
+        plot = (
+            ggplot(
+                merged_auc_jsd,
+                aes(x="metric_type", y="normalized_value", fill="data_type"),
+            )
+            + geom_boxplot(
+                position="dodge",
+                outlier_alpha=0.1,
+                outlier_shape=".",
+                outlier_size=1,
+            )
+            + facet_wrap("~overall_variant", scales="free", ncol=4)
+            + labs(x="Metric", y="Quality Score", fill="Data type")
+            + ylim(0, 100)
+            + theme_bw()
+            + theme(
+                axis_text_x=element_text(angle=45, hjust=1),
+                strip_text_x=element_text(size=8),
+                legend_position="top",
+            )
         )
-        + geom_boxplot(
-            position="dodge",
-            outlier_alpha=0.1,
-            outlier_shape=".",
-            outlier_size=1,
+        nrow = len(merged_auc_jsd["overall_variant"].unique()) // 4
+        height = 8 * nrow
+        plot.save(
+            output_plot.with_name(output_plot.stem + "_boxplot.png"),
+            width=29,
+            height=height,
+            units="cm",
+            limitsize=False,
         )
-        + facet_wrap("~overall_variant", scales="free", ncol=4)
-        + labs(x="Metric", y="Quality Score", fill="Data type")
-        + ylim(0, 100)
-        + theme_bw()
-        + theme(
-            axis_text_x=element_text(angle=45, hjust=1),
-            strip_text_x=element_text(size=8),
-            legend_position="top",
+    else:
+        # Only one variant
+        plot = (
+            ggplot(
+                merged,
+                aes(x="metric_type", y="normalized_value", fill="data_type"),
+            )
+            + geom_bar(stat="identity", position="dodge")
+            + labs(
+                x="Metric",
+                y="Quality Score",
+                fill="Data type",
+                title=variants[0],
+            )
+            + ylim(0, 100)
+            + theme_bw()
+            + theme(
+                axis_text_x=element_text(angle=45, hjust=1),
+                legend_position="top",
+            )
         )
-    )
-    nrow = len(merged_auc_jsd["overall_variant"].unique()) // 4
-    height = 8 * nrow
-    plot.save(
-        output_plot.with_name(output_plot.stem + "_boxplot.png"),
-        width=29,
-        height=height,
-        units="cm",
-        limitsize=False,
-    )
+        plot.save(output_plot)
+
+        plot = (
+            ggplot(
+                merged_auc_jsd,
+                aes(x="metric_type", y="normalized_value", fill="data_type"),
+            )
+            + geom_boxplot(
+                position="dodge",
+                outlier_alpha=0.1,
+                outlier_shape=".",
+                outlier_size=1,
+            )
+            + labs(
+                x="Metric",
+                y="Quality Score",
+                fill="Data type",
+                title=variants[0],
+            )
+            + ylim(0, 100)
+            + theme_bw()
+            + theme(
+                axis_text_x=element_text(angle=45, hjust=1),
+                legend_position="top",
+            )
+        )
+        plot.save(output_plot.with_name(output_plot.stem + "_boxplot.png"))
 
 
 if __name__ == "__main__":

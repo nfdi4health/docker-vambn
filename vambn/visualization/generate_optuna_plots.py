@@ -92,8 +92,10 @@ def plot_study_results(study_uri: str, study_name: str, output_folder: Path):
                 fig.write_image(os.path.join(output_folder, f"slice_{i}.png"))
 
         typer.echo(f"Plots saved in {output_folder}.")
-    except RuntimeError:
+    except ValueError:
         logger.error("No trials found in study or variance equals 0.")
+    except RuntimeError:
+        logger.error("Runtime error")
 
 
 if __name__ == "__main__":
