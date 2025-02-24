@@ -377,6 +377,10 @@ class BaseTrainer(
             params = trial.params
             best_epoch = trial.user_attrs.get("best_epoch", None)
             params["epochs"] = best_epoch
+            opt = self.config.optimization
+            params["early_stopping"] = opt.early_stopping
+            params["early_stopping_threshold"] = opt.early_stopping_threshold
+            params["patience"] = opt.patience
 
             # Process the parameters
             params["batch_size"] = 2 ** params.pop("batch_size_n")
@@ -1612,6 +1616,9 @@ class ModularTrainer(
             mtl_methods=mtl_methods,
             dim_ys=dim_ys,
             dim_z=dim_z,
+            early_stopping=opt.early_stopping,
+            early_stopping_threshold=opt.early_stopping_threshold,
+            patience=opt.patience,
         )
 
     def get_module_config(
