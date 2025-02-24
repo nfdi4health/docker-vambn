@@ -484,7 +484,7 @@ class CountHead(BaseModuleHead[PoissonParameters, dists.Poisson]):
         """
         y = self.internal_pass(samples_z)
         s_and_y = torch.cat([y, samples_s], dim=-1)
-        rate = self.lambda_layer(s_and_y)
+        rate = nn.functional.softplus(self.lambda_layer(s_and_y))
         return PoissonParameters(rate)
 
     def dist(self, params: PoissonParameters) -> dists.Poisson:
