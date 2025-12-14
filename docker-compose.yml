@@ -1,20 +1,6 @@
 version: '3.8'
 
 services:
-  snakemake:
-    image: ghcr.io/nfdi4health/docker-vambn/vambn:latest
-    volumes:
-      - ./vambn_config.yml:/usr/src/app/vambn_config.yml
-      - ./data:/usr/src/app/data
-      - ./reports:/usr/src/app/reports
-      - ./logs:/usr/src/app/logs
-    depends_on:
-      - postgres
-      - mlflow
-    networks:
-      - backend
-    entrypoint: tail -f /dev/null
-
   postgres:
     image: postgres:13
     environment:
@@ -23,6 +9,8 @@ services:
       POSTGRES_DB: optuna
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - backend
     healthcheck:
@@ -31,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
     entrypoint:
-      - sh
+      - shpodm
       - -c
       - docker-entrypoint.sh postgres
 
