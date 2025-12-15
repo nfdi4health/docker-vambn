@@ -12,6 +12,7 @@ authors = [
 ]
 dependencies = [
     "dill>=0.4.0",
+    "kaleido>=1.2.0",
     "lightning>=2.6.0",
     "matplotlib>=3.10.8",
     "mkdocs>=1.6.1",

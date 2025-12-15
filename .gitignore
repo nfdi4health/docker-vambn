@@ -277,7 +277,7 @@ data/raw/*
 .RData
 .Rhistory
 Rplots.pdf
-notebooks/
+#notebooks/
 *reports*/
 
 vambn_config.yml # requires forced add; default values should not be overwritten

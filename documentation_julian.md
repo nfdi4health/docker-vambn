@@ -36,5 +36,19 @@ The run finished!!!
   - ```snakemake -s ./snakemake_modules/traditional-postprocessing.snakefile --use-conda --conda-frontend mamba -c8```
 - error in GenreateUmap and GenreateOptunaPlots
   - GenerateUmap, maybe because no tool umap --> installed umap-learn 
-  - Why GenerateOptunaPlots fails (?) -> maybe postrgsql connection?
--  
+  - GenerateOptunaPlots -> kalaido package missing --> installed it
+
+run finished
+
+
+- Try out other input data
+- set config_texas.json, variance threshold to 0.
+- use scaled and transformed input_texas.. 
+
+Todo:
+- Understand Code and how it filters input data!1
+- Do filtering or inspect intermediate steps
+- Probably better to "exclude" filtering so that input and synthetic data can be compared better!
+
+
+- 
