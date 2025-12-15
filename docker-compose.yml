@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
     entrypoint:
-      - shpodm
+      - sh
       - -c
       - docker-entrypoint.sh postgres
 

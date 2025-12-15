@@ -33,7 +33,7 @@ import yaml
 from pandas.core.api import DataFrame as DataFrame
 from scipy.stats import pearsonr, spearmanr
 from sklearn.model_selection import KFold, train_test_split
-from syndat.quality import get_auc
+from syndat.metrics import discriminator_auc
 from torch._tensor import Tensor
 from torch.utils.data import DataLoader
 
@@ -1280,7 +1280,7 @@ class TraditionalTrainer(
                         synthetic=synthetic_data_filtered,
                     )
 
-                    auc = get_auc(orig_data_filtered, synthetic_data_filtered)
+                    auc = discriminator_auc(orig_data_filtered, synthetic_data_filtered)
                     if auc < 0.5:
                         auc = 1 - auc
                     auc_quality = max(math.floor((1 - auc) * 200), 1)
@@ -1797,7 +1797,7 @@ class ModularTrainer(
                     )
                     rel_corr_loss.append(fold_rel_corr_loss)
 
-                    auc = get_auc(orig_data_filtered, decoded_data_filtered)
+                    auc = discriminator_auc(orig_data_filtered, decoded_data_filtered)
                     if auc < 0.5:
                         auc = 1 - auc
                     auc_quality = max(math.floor((1 - auc) * 200), 1)

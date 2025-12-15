@@ -23,3 +23,18 @@ Here I will keep track of everything I do or change in the project.
 -  ```podman compose up -d```
 - ```snakemake -s ./snakemake_modules/traditional-modelling.snakefile --use-conda --conda-frontend mamba -c8```
   - only use traditional modelling
+
+
+- Some error occured, first uv add dill
+- Than not syndat.quality, get_auc 
+  - --> changed trainer.py --> from syndat.metrics import discriminator_auc and changed code 
+  - Happend because i use the up-to-date version of syndat not 0.0.2 or so
+
+The run finished!!!
+
+- Now i want to create the visualitsations with
+  - ```snakemake -s ./snakemake_modules/traditional-postprocessing.snakefile --use-conda --conda-frontend mamba -c8```
+- error in GenreateUmap and GenreateOptunaPlots
+  - GenerateUmap, maybe because no tool umap --> installed umap-learn 
+  - Why GenerateOptunaPlots fails (?) -> maybe postrgsql connection?
+-  
