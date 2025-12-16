@@ -22,7 +22,7 @@ snakemake:
 general:
   seed: 42
   eval_batch_size: 64
-  device: "cpu"
+  device: "cuda"
   optuna_db: "postgresql://vambn:app@localhost:5432/optuna" # Database connection for Optuna; If not available set to null and sqlite databases will be used
   logging:
     level: 20

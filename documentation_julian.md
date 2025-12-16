@@ -41,14 +41,43 @@ The run finished!!!
 run finished
 
 
-- Try out other input data
+## Run with filtered Data
+- Filter data based on split_Texas_Data-Exploration-Cleaning-Preprocessing.ipynb
+- move input_texas to old folder
+- try out ```snakemake -s ./snakemake_modules/traditional-modelling.snakefile --use-conda --conda-frontend mamba -c8```
+- Error:
+```bash
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "/usr/src/app/vambn/data/make_data.py", line 522, in <module>
+    app()
+
+  File "/usr/src/app/vambn/data/make_data.py", line 187, in make
+    processed_data = prepare_data(
+                     ^^^^^^^^^^^^^
+
+  File "/usr/src/app/vambn/data/helpers.py", line 433, in prepare_data
+    raise Exception("No columns left after filtering.")
+
+Exception: No columns left after filtering.
+```
+
+### Next try
 - set config_texas.json, variance threshold to 0.
-- use scaled and transformed input_texas.. 
+- needs very long. always "freezes" at Fitting the final BN using  rsmax2  with  500  bootstrap samples.
+
+
+
+
+
+
 
 Todo:
 - Understand Code and how it filters input data!1
 - Do filtering or inspect intermediate steps
 - Probably better to "exclude" filtering so that input and synthetic data can be compared better!
-
-
-- 
+- Container aif version 2.0.1
