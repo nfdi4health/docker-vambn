@@ -69,8 +69,8 @@ Exception: No columns left after filtering.
 ### Next try
 - set config_texas.json, variance threshold to 0.
 - needs very long. always "freezes" at Fitting the final BN using  rsmax2  with  500  bootstrap samples.
-
-
+- manually changing the code to set method to "tabu" and only needs 2 min (instead of more than 18h!!!)
+- looking at the real / synthetic data. 
 
 
 

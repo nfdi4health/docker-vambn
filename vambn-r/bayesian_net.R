@@ -93,6 +93,7 @@ run_cv <- function(data, blacklist, whitelist, max_p, n_bootstrap, cores) {
   return(best_method)
 }
 
+
 fit_bn <- function(data, best_method, blacklist, whitelist, maxp, cores, bootstrap_samples = 1000, threshold = 0.5) {
   cat("Fitting the final BN.\n")
 
@@ -225,6 +226,11 @@ main <- function() {
     n_bootstrap = args$n_bootstrap,
     cores = args$cores
   )
+  ################################################################################
+  ## Temporary changes due to computational limiatation by using tabu
+  best_method <- "tabu"
+  cat("Manually changing best method to: ", best_method, "\n")
+  ################################################################################
   bootstrap_threshold <- 0.3
   results_list <- fit_bn(
     data = data,
