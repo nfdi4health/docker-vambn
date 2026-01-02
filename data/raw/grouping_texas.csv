@@ -13,7 +13,7 @@ illnessSeverity,riskModule,categorical
 lengthOfStay,riskModule,pos
 totalCharges,chargesModule,pos
 totalNonCovCharges,chargesModule,pos
-totalChargesAccom,chargesModule,pos
+totalChargesAccomm,chargesModule,pos
 totalNonCovChargesAccomm,chargesModule,pos
 totalChargesAncil,chargesModule,pos
 totalNonCovChargesAncil,chargesModule,pos

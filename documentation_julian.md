@@ -70,14 +70,31 @@ Exception: No columns left after filtering.
 - set config_texas.json, variance threshold to 0.
 - needs very long. always "freezes" at Fitting the final BN using  rsmax2  with  500  bootstrap samples.
 - manually changing the code to set method to "tabu" and only needs 2 min (instead of more than 18h!!!)
-- looking at the real / synthetic data. 
+- looking at the real / synthetic data --> First look, very similar. But different BNs and slightly different outcomes. 
+  
+> Achtung: ```totalChargesAccomm``` in grouping und input_texas unterschiedlich !!!
 
 
-
-
-
-Todo:
-- Understand Code and how it filters input data!1
+Todos:
+- Understand Code and how it filters input data!
 - Do filtering or inspect intermediate steps
 - Probably better to "exclude" filtering so that input and synthetic data can be compared better!
-- Container aif version 2.0.1
+- Container of version 2.0.1 test -> does it work with "wrong" R.yml file? Why is in local repo the wrong R.yml file?
+
+1. Understanding what Manuel changed compared to much easier understandable version 1.0.0 and Paper-VAMBN
+   - tensorflow -> pytorch
+   - what are all the different layers/modules? 
+     - --> includes multiple HIVAE implementations with pytorch (lst-hivae, GAN-hivae)
+     - What arte HEADS?
+   - Why are there so many new .py files? What are they doing?
+   - Where are the essential config files? 
+   - Why is the code so much less documented ??? In version 1.0.0 the structure of what will be executed etc is clearer...
+
+2. Use version 1.0.0 to execute texas file "by hand"
+   - hopefully this will enhance my understanding of the pipeline and why manuel implemented it like this
+  
+3. Maybe I can "reduce" manuel's code to version 1.0.0 (?) and only "necessary" changes of vambn will be used to later to include DAGMA.
+   - VAMBN would be closer to implementation in paper
+   - VAMBN-DAGMA could be easier compared to VAMBN!
+   - Maybe I can get the same data as in Paper to directly compare results?
+  
