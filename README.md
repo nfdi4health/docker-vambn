@@ -1,10 +1,14 @@
 # Variational Autoencoders Modular Bayesian Networks (VAMBN)
 
-This repository hosts the code for VAMBN 2.0. Unlike its predecessor, this version features a PyTorch-based HI-VAE (see [Nazabal et al.&#39;s paper](https://arxiv.org/abs/1807.03653)) and employs [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) to manage the workflow of Python and R scripts.
+This repository hosts the code for VAMBN 2.0. Unlike its predecessor, this version features a PyTorch-based HI-VAE (see [Nazabal et al.'s paper](https://arxiv.org/abs/1807.03653)) and employs [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) to manage the workflow of Python and R scripts.
 
 ## Documentation
 
 For detailed information, visit the [documentation page](https://nfdi4health.github.io/docker-vambn/).
+
+## Support
+
+For questions or support, please contact the NFDI4Health helpdesk at [helpdesk@nfdi4health.de](mailto:helpdesk@nfdi4health.de).
 
 ## License
 
